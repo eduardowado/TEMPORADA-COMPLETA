@@ -104,7 +104,8 @@
         /* --- Estilos de Partidos --- */
         .partido {
             display: grid;
-            grid-template-columns: 1fr auto 45px auto 45px auto 1fr;
+            /* SE HAN QUITADO 2 COLUMNAS (radio y label) */
+            grid-template-columns: 1fr 45px auto 45px 1fr;
             align-items: center;
             gap: 8px;
             padding: 12px 0;
@@ -126,6 +127,7 @@
             font-size: 0.8em;
             color: #777;
             font-weight: 700;
+            text-align: center;
         }
 
         .partido input {
@@ -135,14 +137,6 @@
             padding: 10px 5px;
         }
         
-        .partido-radio {
-            text-align: center;
-        }
-        
-        input[type="radio"] {
-            transform: scale(1.2);
-        }
-
         /* --- Botón y Mensajes --- */
         #btn-enviar {
             width: 100%;
@@ -213,14 +207,15 @@
                 white-space: nowrap;
             }
             .partido {
-                grid-template-columns: 1fr 35px 35px 1fr;
+                /* Se quitan 2 columnas (radio y label) */
+                grid-template-columns: 1fr 35px auto 35px 1fr;
                 gap: 5px;
             }
-            .equipo-local { grid-column: 1 / 1; text-align: left;}
-            .equipo-visitante { grid-column: 4 / 4; text-align: right;}
+            .equipo-local { grid-column: 1 / 1; text-align: right;}
+            .equipo-visitante { grid-column: 5 / 5; text-align: left;}
             .partido input.local { grid-column: 2 / 2; }
-            .partido input.visitante { grid-column: 3 / 3; }
-            .vs-divider, .partido-radio { display: none; }
+            .vs-divider { grid-column: 3 / 3; }
+            .partido input.visitante { grid-column: 4 / 4; }
         }
     </style>
 </head>
@@ -283,8 +278,12 @@
                         <input type="number" id="totalgoles" name="totalgoles" min="0" placeholder="Ej. 25" required>
                     </div>
                     <div class="form-group">
-                        <label>Partido Comodín (Puntos Dobles):</label>
-                        <p id="comodin-placeholder" style="text-align:center; color:#777; margin-top: 10px;">Selecciona tu comodín de la lista de partidos de arriba.</p>
+                        <!-- ¡CAMBIO PRINCIPAL! Se reemplaza el <p> por un <select> -->
+                        <label for="comodin-select">Partido Comodín (Puntos Dobles):</label>
+                        <select id="comodin-select" name="comodin" required>
+                            <option value="">Cargando partidos...</option>
+                            <!-- Las opciones se insertarán aquí -->
+                        </select>
                     </div>
                 </div>
             </div>
@@ -301,26 +300,26 @@
 
     <script>
         // =========================================================================
-        // SCRIPT DEL FORMULARIO (CORREGIDO)
+        // SCRIPT DEL FORMULARIO (v2.1 - Comodín como Select)
         // =========================================================================
         
         // --- 1. CONFIGURACIÓN Y VARIABLES ---
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGL-WVzhMytH_drkXBrE3hi4GoITUGYzGXfb60QA_RkALRiCKOq5KsQrTZyRm4g71v/exec";
 
-        // Definición de todas las variables del DOM (¡ESTO FALTABA!)
         const form = document.getElementById('quiniela-form');
         const jornadaSelect = document.getElementById('jornada');
         const fechaLimiteInput = document.getElementById('fecha-limite');
         const partidosContainer = document.getElementById('partidos-container');
         const partidosPlaceholder = document.getElementById('partidos-placeholder');
         const extrasContainer = document.getElementById('extras-container');
-        const comodinPlaceholder = document.getElementById('comodin-placeholder');
+        // ¡NUEVA VARIABLE!
+        const comodinSelect = document.getElementById('comodin-select');
         const submitContainer = document.getElementById('submit-container');
         const btnEnviar = document.getElementById('btn-enviar');
         const loadingDiv = document.getElementById('loading');
         const mensajeDiv = document.getElementById('mensaje');
         
-        let partidosData = []; // Para guardar los partidos cargados
+        let partidosData = []; 
 
         // --- 2. Cargar Partidos (GET) ---
         jornadaSelect.addEventListener('change', async () => {
@@ -332,7 +331,7 @@
             
             mostrarLoading(true);
             mostrarMensaje(false);
-            limpiarFormulario(); // Limpiar antes de cargar nuevos
+            limpiarFormulario(); 
 
             try {
                 const url = `${SCRIPT_URL}?jornada=${jornadaNum}`;
@@ -358,27 +357,34 @@
         // --- 3. Dibujar Partidos y Comodín ---
         function dibujarPartidos(partidos) {
             partidosPlaceholder.style.display = 'none';
-            comodinPlaceholder.style.display = 'none';
-            partidosContainer.innerHTML = ''; // Limpiar
+            partidosContainer.innerHTML = ''; // Limpiar partidos
+            
+            // ¡MODIFICADO! Limpiar y llenar el <select> del comodín
+            comodinSelect.innerHTML = '';
+            const defaultOption = document.createElement('option');
+            defaultOption.value = "";
+            defaultOption.textContent = "Selecciona tu comodín...";
+            comodinSelect.appendChild(defaultOption);
 
             partidos.forEach((partido, index) => {
+                // --- A. Dibujar el partido en la lista ---
                 const partidoDiv = document.createElement('div');
                 partidoDiv.className = 'partido';
                 
-                // Generar el HTML para cada partido
                 partidoDiv.innerHTML = `
                     <span class="equipo equipo-local">${partido.local}</span>
-                    <span class="partido-radio">
-                        <input type="radio" name="comodin" value="${index}" id="comodin-${index}" required>
-                    </span>
                     <input type="number" name="p${index}_local" class="local" min="0" required>
                     <span class="vs-divider">vs</span>
                     <input type="number" name="p${index}_visita" class="visitante" min="0" required>
-                    <label for="comodin-${index}" class="vs-divider" style="cursor:pointer;">Doble</label>
                     <span class="equipo equipo-visitante">${partido.visitante}</span>
                 `;
-                
                 partidosContainer.appendChild(partidoDiv);
+
+                // --- B. Añadir el partido al <select> de comodín ---
+                const comodinOption = document.createElement('option');
+                comodinOption.value = index; // El valor es 0, 1, 2, etc.
+                comodinOption.textContent = `P${index+1}: ${partido.local} vs ${partido.visitante}`;
+                comodinSelect.appendChild(comodinOption);
             });
         }
         
@@ -393,11 +399,9 @@
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
             
-            // Añadir la acción para el "router" del script
             data.accion = "enviarPronostico";
 
             try {
-                // Hacemos un fetch con POST
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: new URLSearchParams(data)
@@ -427,8 +431,9 @@
             partidosData = [];
             partidosContainer.innerHTML = '';
             partidosPlaceholder.style.display = 'block';
-            comodinPlaceholder.style.display = 'block';
             fechaLimiteInput.value = '';
+            // Limpiar el select de comodín
+            comodinSelect.innerHTML = '<option value="">Selecciona una jornada primero...</option>';
             mostrarElementosFormulario(false);
         }
 
@@ -466,3 +471,5 @@
     </script>
 </body>
 </html>
+
+
