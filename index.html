@@ -262,9 +262,7 @@
                         <input type="text" id="fecha-limite" readonly disabled style="background:#f4f4f4; color:#555;">
                     </div>
                     
-                    <!-- CAMBIO: Se eliminó el campo "Nombre Completo" -->
-
-                    <div class="form-group full-width"> <!-- CAMBIO: Se añadió la clase "full-width" -->
+                    <div class="form-group full-width">
                         <label for="codigo">Código de Acceso:</label>
                         <input type="text" id="codigo" name="codigo" placeholder="Tu código único" required>
                     </div>
@@ -286,8 +284,7 @@
                     </div>
                     <div class="form-group">
                         <label>Partido Comodín (Puntos Dobles):</label>
-                        <p id="comodin-placeholder" style="text-align:center; color:#777; margin-top: 10px;">Cargando...</p>
-                        <!-- Los radios del comodín se insertarán aquí -->
+                        <p id="comodin-placeholder" style="text-align:center; color:#777; margin-top: 10px;">Selecciona tu comodín de la lista de partidos de arriba.</p>
                     </div>
                 </div>
             </div>
@@ -304,8 +301,86 @@
 
     <script>
         // =========================================================================
-        // SCRIPT DEL FORMULARIO
+        // SCRIPT DEL FORMULARIO (CORREGIDO)
         // =========================================================================
+        
+        // --- 1. CONFIGURACIÓN Y VARIABLES ---
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxGL-WVzhMytH_drkXBrE3hi4GoITUGYzGXfb60QA_RkALRiCKOq5KsQrTZyRm4g71v/exec";
+
+        // Definición de todas las variables del DOM (¡ESTO FALTABA!)
+        const form = document.getElementById('quiniela-form');
+        const jornadaSelect = document.getElementById('jornada');
+        const fechaLimiteInput = document.getElementById('fecha-limite');
+        const partidosContainer = document.getElementById('partidos-container');
+        const partidosPlaceholder = document.getElementById('partidos-placeholder');
+        const extrasContainer = document.getElementById('extras-container');
+        const comodinPlaceholder = document.getElementById('comodin-placeholder');
+        const submitContainer = document.getElementById('submit-container');
+        const btnEnviar = document.getElementById('btn-enviar');
+        const loadingDiv = document.getElementById('loading');
+        const mensajeDiv = document.getElementById('mensaje');
+        
+        let partidosData = []; // Para guardar los partidos cargados
+
+        // --- 2. Cargar Partidos (GET) ---
+        jornadaSelect.addEventListener('change', async () => {
+            const jornadaNum = jornadaSelect.value;
+            if (!jornadaNum) {
+                limpiarFormulario();
+                return;
+            }
+            
+            mostrarLoading(true);
+            mostrarMensaje(false);
+            limpiarFormulario(); // Limpiar antes de cargar nuevos
+
+            try {
+                const url = `${SCRIPT_URL}?jornada=${jornadaNum}`;
+                const response = await fetch(url);
+                const data = await response.json();
+
+                if (data.status === 'ok') {
+                    partidosData = data.partidos;
+                    actualizarFechaLimite(data.fechaLimite);
+                    dibujarPartidos(partidosData);
+                    mostrarElementosFormulario(true);
+                } else {
+                    throw new Error(data.message);
+                }
+
+            } catch (error) {
+                mostrarMensaje('error', `Error al cargar: ${error.message}`);
+            } finally {
+                mostrarLoading(false);
+            }
+        });
+
+        // --- 3. Dibujar Partidos y Comodín ---
+        function dibujarPartidos(partidos) {
+            partidosPlaceholder.style.display = 'none';
+            comodinPlaceholder.style.display = 'none';
+            partidosContainer.innerHTML = ''; // Limpiar
+
+            partidos.forEach((partido, index) => {
+                const partidoDiv = document.createElement('div');
+                partidoDiv.className = 'partido';
+                
+                // Generar el HTML para cada partido
+                partidoDiv.innerHTML = `
+                    <span class="equipo equipo-local">${partido.local}</span>
+                    <span class="partido-radio">
+                        <input type="radio" name="comodin" value="${index}" id="comodin-${index}" required>
+                    </span>
+                    <input type="number" name="p${index}_local" class="local" min="0" required>
+                    <span class="vs-divider">vs</span>
+                    <input type="number" name="p${index}_visita" class="visitante" min="0" required>
+                    <label for="comodin-${index}" class="vs-divider" style="cursor:pointer;">Doble</label>
+                    <span class="equipo equipo-visitante">${partido.visitante}</span>
+                `;
+                
+                partidosContainer.appendChild(partidoDiv);
+            });
+        }
         
         // --- 4. Enviar Formulario (POST) ---
         form.addEventListener('submit', async (e) => {
@@ -322,14 +397,13 @@
             data.accion = "enviarPronostico";
 
             try {
-                // --- Hack para leer la respuesta ---
-                // Google script redirige, así que hacemos un fetch normal y leemos el error si falla
-                const checkResponse = await fetch(SCRIPT_URL, {
+                // Hacemos un fetch con POST
+                const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: new URLSearchParams(data)
                 });
                 
-                const resJson = await checkResponse.json();
+                const resJson = await response.json();
 
                 if (resJson.status === 'ok') {
                     mostrarMensaje('success', resJson.message);
@@ -353,6 +427,7 @@
             partidosData = [];
             partidosContainer.innerHTML = '';
             partidosPlaceholder.style.display = 'block';
+            comodinPlaceholder.style.display = 'block';
             fechaLimiteInput.value = '';
             mostrarElementosFormulario(false);
         }
