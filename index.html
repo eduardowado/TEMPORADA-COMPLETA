@@ -20,6 +20,32 @@
             align-items: center;
             min-height: 100vh;
         }
+        /* Estilo para el botón FIJO anaranjado */
+    .btn-regreso-fijo {
+        position: fixed; /* Se queda pegado aunque bajes la pantalla */
+        top: 20px;       /* Distancia desde el techo */
+        right: 20px;     /* Distancia desde la derecha */
+        
+        /* Colores */
+        background-color: #ffcc80; /* Anaranjado claro */
+        color: #5d4037;            /* Letra café oscuro */
+        border: 2px solid #ffffff; /* Borde blanco */
+        
+        /* Diseño */
+        text-decoration: none;
+        padding: 10px 15px;
+        border-radius: 30px; 
+        font-family: sans-serif;
+        font-weight: bold;
+        font-size: 14px;
+        z-index: 9999; /* Siempre visible encima de todo */
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+    }
+
+    .btn-regreso-fijo:hover {
+        background-color: #ffb74d; 
+        transform: scale(1.05);    
+    }
 
         @keyframes gradientBG {
             0% { background-position: 0% 50%; }
@@ -257,7 +283,9 @@
     </style>
 </head>
 <body>
-
+   <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">
+    ↩ Regresar
+</a>
     <div class="container">
         <h1>Quiniela de la Fuente</h1>
 
