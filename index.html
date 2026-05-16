@@ -3,296 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quiniela de Temporada - Llenar Jornada</title>
+    <title>Quiniela de la Fuente - Llenar Jornada</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Anton&family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 20px;
+            margin: 0; padding: 20px;
             background: linear-gradient(135deg, #0b4f6c, #1d976c);
             background-size: 200% 200%;
             animation: gradientBG 15s ease infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
+            display: flex; justify-content: center; align-items: center; min-height: 100vh;
         }
-        /* Estilo para el botón FIJO anaranjado */
-    .btn-regreso-fijo {
-        position: fixed; /* Se queda pegado aunque bajes la pantalla */
-        top: 20px;       /* Distancia desde el techo */
-        right: 20px;     /* Distancia desde la derecha */
         
-        /* Colores */
-        background-color: #ffcc80; /* Anaranjado claro */
-        color: #5d4037;            /* Letra café oscuro */
-        border: 2px solid #ffffff; /* Borde blanco */
-        
-        /* Diseño */
-        text-decoration: none;
-        padding: 10px 15px;
-        border-radius: 30px; 
-        font-family: sans-serif;
-        font-weight: bold;
-        font-size: 14px;
-        z-index: 9999; /* Siempre visible encima de todo */
-        box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
-    }
+        @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
-    .btn-regreso-fijo:hover {
-        background-color: #ffb74d; 
-        transform: scale(1.05);    
-    }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        .btn-regreso-fijo {
+            position: fixed; top: 20px; right: 20px;
+            background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff;
+            text-decoration: none; padding: 10px 15px; border-radius: 30px; 
+            font-weight: bold; font-size: 14px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
         }
 
         .container {
-            background-color: #ffffff;
-            padding: 25px 35px;
-            border-radius: 20px;
+            background-color: #ffffff; padding: 25px 35px; border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
-            max-width: 700px;
-            width: 100%;
-            box-sizing: border-box;
+            max-width: 700px; width: 100%; box-sizing: border-box;
         }
 
-        h1 {
-            font-family: 'Anton', sans-serif;
-            color: #0b4f6c;
-            text-align: center;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 0 0 20px 0;
-        }
+        h1 { font-family: 'Anton', sans-serif; color: #0b4f6c; text-align: center; text-transform: uppercase; margin: 0 0 20px 0; }
 
-        /* --- Estilos del Formulario --- */
-        .form-section {
-            margin-bottom: 25px;
-            border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 25px;
-        }
+        .form-section { margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 25px; }
         
-        /* --- ¡NUEVO! Tipo de Juego --- */
-        .tipo-juego-selector {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 25px;
-        }
+        .tipo-juego-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
         .tipo-juego-selector button {
-            padding: 12px 10px;
-            font-size: 0.9em;
-            font-weight: 700;
-            border: 2px solid #ccc;
-            background-color: #f9f9f9;
-            color: #555;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.2s ease;
+            padding: 12px 10px; font-weight: 700; border: 2px solid #ccc;
+            background-color: #f9f9f9; color: #555; border-radius: 8px; cursor: pointer;
         }
-        .tipo-juego-selector button:hover {
-            background-color: #f0f0f0;
-        }
-        .tipo-juego-selector button.active {
-            background-color: #1d976c;
-            color: white;
-            border-color: #1d976c;
-            box-shadow: 0 4px 10px rgba(29, 151, 108, 0.3);
-        }
-        /* --- FIN NUEVO --- */
+        .tipo-juego-selector button.active { background-color: #1d976c; color: white; border-color: #1d976c; }
 
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; }
+        .full-width { grid-column: 1 / -1; }
+        .hidden-field { display: none; }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-        }
+        input, select { padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-        }
-        
-        .form-group.full-width {
-            grid-column: 1 / -1;
-        }
-        
-        /* ¡NUEVO! Ocultar campos */
-        .hidden-field {
-            display: none;
-        }
-
-        label {
-            font-weight: 700;
-            color: #555;
-            margin-bottom: 8px;
-            font-size: 0.9em;
-        }
-
-        input[type="text"],
-        input[type="number"],
-        input[type="password"],
-        select {
-            padding: 12px;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            font-size: 1em;
-            font-family: 'Roboto', sans-serif;
-            transition: border-color 0.2s, box-shadow 0.2s;
-        }
-        
-        input[type="number"] {
-            -moz-appearance: textfield; /* Para Firefox */
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none; /* Para Chrome, Safari, Edge */
-            margin: 0;
-        }
-
-        input:focus, select:focus {
-            outline: none;
-            border-color: #1d976c;
-            box-shadow: 0 0 0 3px rgba(29, 151, 108, 0.2);
-        }
-
-        /* --- Estilos de Partidos --- */
-        .partido {
-            display: grid;
-            grid-template-columns: 1fr 45px auto 45px 1fr;
-            align-items: center;
-            gap: 8px;
-            padding: 12px 0;
-            border-bottom: 1px solid #eee;
-        }
-        
-        .partido:last-child {
-            border-bottom: none;
-        }
-
-        .equipo {
-            font-weight: 700;
-            font-size: 0.95em;
-        }
-
+        .partido { display: grid; grid-template-columns: 1fr 45px auto 45px 1fr; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid #eee; }
+        .equipo { font-weight: 700; font-size: 0.95em; }
         .equipo-local { text-align: right; }
-        .equipo-visitante { text-align: left; }
-        .vs-divider {
-            font-size: 0.8em;
-            color: #777;
-            font-weight: 700;
-            text-align: center;
-        }
-
-        .partido input {
-            width: 100%;
-            text-align: center;
-            box-sizing: border-box;
-            padding: 10px 5px;
-        }
+        .vs-divider { font-size: 0.8em; color: #777; font-weight: 700; text-align: center; }
+        .partido input { width: 100%; text-align: center; padding: 10px 5px; }
         
-        /* --- Botón y Mensajes --- */
         #btn-enviar {
-            width: 100%;
-            padding: 16px;
-            font-family: 'Anton', sans-serif;
-            font-size: 1.3em;
-            letter-spacing: 1px;
-            color: #fff;
-            background: linear-gradient(45deg, #e74c3c, #c0392b);
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: transform 0.2s, box-shadow 0.2s;
-            margin-top: 10px;
+            width: 100%; padding: 16px; font-family: 'Anton', sans-serif; font-size: 1.3em;
+            color: #fff; background: linear-gradient(45deg, #e74c3c, #c0392b);
+            border: none; border-radius: 10px; cursor: pointer; transition: 0.2s;
         }
 
-        #btn-enviar:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 15px rgba(192, 57, 43, 0.3);
+        /* --- ESTILOS MODAL INTELIGENTE --- */
+        #modal-confirmacion {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 20000; display: none;
+            justify-content: center; align-items: center;
         }
+        .modal-content {
+            background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 480px; text-align: center;
+        }
+        .banco-info {
+            background: #f1f8e9; border: 1px dashed #2e7d32; padding: 15px; border-radius: 12px; margin: 15px 0; text-align: left;
+        }
+        .btn-confirm { background: #1d976c; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; flex: 1; }
+        .btn-cancel { background: #95a5a6; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; flex: 1; }
         
-        #btn-enviar:disabled {
-            background: #aaa;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        #mensaje {
-            padding: 15px;
-            margin-top: 20px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 700;
-            display: none;
-        }
-
-        #mensaje.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-
-        #mensaje.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        #loading {
-            text-align: center;
-            font-weight: 700;
-            color: #0b4f6c;
-            display: none;
-            margin: 20px 0;
-        }
-
-        /* --- Responsivo --- */
-        @media (max-width: 600px) {
-            .container {
-                padding: 15px 20px;
-            }
-            .tipo-juego-selector {
-                grid-template-columns: 1fr;
-            }
-            .form-grid {
-                grid-template-columns: 1fr;
-            }
-            .equipo {
-                font-size: 0.85em;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            .partido {
-                grid-template-columns: 1fr 35px auto 35px 1fr;
-                gap: 5px;
-            }
-            .equipo-local { grid-column: 1 / 1; text-align: right;}
-            .equipo-visitante { grid-column: 5 / 5; text-align: left;}
-            .partido input.local { grid-column: 2 / 2; }
-            .vs-divider { grid-column: 3 / 3; }
-            .partido input.visitante { grid-column: 4 / 4; }
-        }
+        #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 30000; background: white; padding: 30px; border-radius: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1d976c; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-   <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">
-    ↩ Regresar
-</a>
+    <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
+    
     <div class="container">
         <h1>Quiniela de la Fuente</h1>
 
         <form id="quiniela-form">
-            
             <div class="form-section">
-                <label style="text-align:center; margin-bottom: 15px;">Selecciona tu tipo de juego:</label>
+                <label style="text-align:center; display:block; margin-bottom: 15px;">Selecciona tu tipo de juego:</label>
                 <div class="tipo-juego-selector">
                     <button type="button" id="btn-tipo-temporada" data-tipo="Temporada">Temporada</button>
                     <button type="button" id="btn-tipo-semanal" data-tipo="Semanal">Semanal</button>
@@ -302,69 +100,45 @@
             </div>
 
             <div id="form-content" class="hidden-field">
-            
                 <div class="form-section">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="jornada">Elige la Jornada:</label>
+                            <label>Jornada:</label>
                             <select id="jornada" name="jornada" required>
-                                <option value="">Selecciona una jornada...</option>
-                                <option value="1">Jornada 1</option>
-                                <option value="2">Jornada 2</option>
-                                <option value="3">Jornada 3</option>
-                                <option value="4">Jornada 4</option>
-                                <option value="5">Jornada 5</option>
-                                <option value="6">Jornada 6</option>
-                                <option value="7">Jornada 7</option>
-                                <option value="8">Jornada 8</option>
-                                <option value="9">Jornada 9</option>
-                                <option value="10">Jornada 10</option>
-                                <option value="11">Jornada 11</option>
-                                <option value="12">Jornada 12</option>
-                                <option value="13">Jornada 13</option>
-                                <option value="14">Jornada 14</option>
-                                <option value="15">Jornada 15</option>
-                                <option value="16">Jornada 16</option>
-                                <option value="17">Jornada 17</option>
+                                <option value="">Selecciona...</option>
+                                <script>for(let i=1;i<=17;i++){document.write(`<option value="${i}">Jornada ${i}</option>`);}</script>
                             </select>
                         </div>
                         <div class="form-group">
-                            <label for="fecha-limite">Fecha Límite:</label>
-                            <input type="text" id="fecha-limite" readonly disabled style="background:#f4f4f4; color:#555;">
+                            <label>Fecha Límite:</label>
+                            <input type="text" id="fecha-limite" readonly disabled style="background:#f4f4f4;">
                         </div>
-                        
                         <div class="form-group full-width hidden-field" id="group-nombre">
-                            <label for="nombre_semanal">Nombre Completo (para Quiniela Semanal):</label>
-                            <input type="text" id="nombre_semanal" name="nombre_semanal" placeholder="Tu nombre y apellido">
+                            <label>Nombre:</label>
+                            <input type="text" id="nombre_semanal" name="nombre_semanal" placeholder="Tu nombre">
                         </div>
-
                         <div class="form-group full-width hidden-field" id="group-codigo-temporada">
-                            <label for="codigo_temporada">Código de Acceso (Temporada):</label>
-                            <input type="password" id="codigo_temporada" name="codigo_temporada" placeholder="Tu código de temporada (ej. GUAYO)">
+                            <label>Código Temporada:</label>
+                            <input type="password" id="codigo_temporada" name="codigo_temporada" placeholder="Tu código">
                         </div>
-
                         <div class="form-group full-width hidden-field" id="group-codigo-semanal">
-                            <label for="codigo_semanal">Código de Acceso (Semanal):</label>
-                            <input type="password" id="codigo_semanal" name="codigo_semanal" placeholder="Tu código semanal (ej. 1234)">
+                            <label>Código Semanal:</label>
+                            <input type="password" id="codigo_semanal" name="codigo_semanal" placeholder="Tu código">
                         </div>
                     </div>
                 </div>
 
-                <div class="form-section" id="partidos-container">
-                    <p id="partidos-placeholder" style="text-align:center; color:#777;">Selecciona una jornada para cargar los partidos...</p>
-                </div>
+                <div id="partidos-container" class="form-section"></div>
 
-                <div class="form-section" id="extras-container" style="display:none;">
+                <div id="extras-container" class="form-section" style="display:none;">
                     <div class="form-grid">
                         <div class="form-group">
-                            <label for="totalgoles">Total de Goles (9 Partidos):</label>
-                            <input type="number" id="totalgoles" name="totalgoles" min="0" placeholder="Ej. 25" required>
+                            <label>Total Goles:</label>
+                            <input type="number" id="totalgoles" name="totalgoles" required>
                         </div>
                         <div class="form-group">
-                            <label for="comodin-select">Partido Comodín (Puntos Dobles):</label>
-                            <select id="comodin-select" name="comodin" required>
-                                <option value="">Cargando partidos...</option>
-                            </select>
+                            <label>Comodín (★):</label>
+                            <select id="comodin-select" name="comodin" required></select>
                         </div>
                     </div>
                 </div>
@@ -372,258 +146,172 @@
                 <div id="submit-container" style="display:none;">
                     <button type="submit" id="btn-enviar">Enviar Quiniela</button>
                 </div>
-            </div> </form>
-
-        <div id="loading">Cargando...</div>
-        <div id="mensaje"></div>
+            </div> 
+        </form>
     </div>
 
+    <div id="modal-confirmacion">
+        <div class="modal-content">
+            <h2 id="modal-titulo" style="color: #0b4f6c; margin-top:0;">¿Confirmas tu envío?</h2>
+            <div id="modal-body" style="margin-bottom: 20px;"></div>
+            
+            <div style="display: flex; gap: 10px;">
+                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button class="btn-confirm" onclick="ejecutarEnvioFinal()">Sí, Enviar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading"><div class="spinner"></div>Procesando datos...</div>
+
     <script>
-        // =========================================================================
-        // SCRIPT DEL FORMULARIO (v3.2 - Unificado con 3 Opciones)
-        // =========================================================================
-        
-        // --- 1. CONFIGURACIÓN Y VARIABLES ---
-        
-        // ¡¡¡ URL ACTUALIZADA CON TU IMPLEMENTACIÓN FINAL !!!
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwJjZecSugJuwwhOOHtJPSgBSZ40tVsbkcff43awD_2weuJp0KEe1FolTIWnf-qpJi7/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWENw0FxnI0WNkkX34k2AfRSOhNiBmxYodgR4fRQe5sF_4vOeCQsH_LPrv9epSiNTurQ/exec";
 
-        // Controles de Tipo
-        const btnTipoTemporada = document.getElementById('btn-tipo-temporada');
-        const btnTipoSemanal = document.getElementById('btn-tipo-semanal');
-        const btnTipoAmbos = document.getElementById('btn-tipo-ambos');
-        const tipoJuegoInput = document.getElementById('tipo_juego');
-        
-        // Formulario Principal
-        const formContent = document.getElementById('form-content');
         const form = document.getElementById('quiniela-form');
+        const tipoJuegoInput = document.getElementById('tipo_juego');
         const jornadaSelect = document.getElementById('jornada');
-        const fechaLimiteInput = document.getElementById('fecha-limite');
         
-        // Campos de Código y Nombre
-        const groupNombre = document.getElementById('group-nombre');
-        const inputNombre = document.getElementById('nombre_semanal');
-        const groupCodigoTemporada = document.getElementById('group-codigo-temporada');
-        const inputCodigoTemporada = document.getElementById('codigo_temporada');
-        const groupCodigoSemanal = document.getElementById('group-codigo-semanal');
-        const inputCodigoSemanal = document.getElementById('codigo_semanal');
-
-        // Partidos y Extras
-        const partidosContainer = document.getElementById('partidos-container');
-        const partidosPlaceholder = document.getElementById('partidos-placeholder');
-        const extrasContainer = document.getElementById('extras-container');
-        const comodinSelect = document.getElementById('comodin-select');
-        const submitContainer = document.getElementById('submit-container');
-        
-        // Controles de Estado
-        const btnEnviar = document.getElementById('btn-enviar');
-        const loadingDiv = document.getElementById('loading');
-        const mensajeDiv = document.getElementById('mensaje');
-        
-        let partidosData = []; 
-
-        // --- 2. MANEJO DE TIPO DE JUEGO ---
         function seleccionarTipoJuego(tipo) {
-            // Actualizar valor
             tipoJuegoInput.value = tipo;
-            
-            // Actualizar botones
-            btnTipoTemporada.classList.remove('active');
-            btnTipoSemanal.classList.remove('active');
-            btnTipoAmbos.classList.remove('active');
-            
-            // Mostrar formulario
-            formContent.classList.remove('hidden-field');
-            
-            // Ocultar todos los campos de identificación
-            groupNombre.classList.add('hidden-field');
-            groupCodigoTemporada.classList.add('hidden-field');
-            groupCodigoSemanal.classList.add('hidden-field');
-            
-            // Quitar 'required' de todos
-            inputNombre.required = false;
-            inputCodigoTemporada.required = false;
-            inputCodigoSemanal.required = false;
-
-            // Mostrar campos según el tipo
-            if (tipo === 'Temporada') {
-                btnTipoTemporada.classList.add('active');
-                groupCodigoTemporada.classList.remove('hidden-field');
-                inputCodigoTemporada.required = true;
-            } else if (tipo === 'Semanal') {
-                btnTipoSemanal.classList.add('active');
-                groupNombre.classList.remove('hidden-field');
-                inputNombre.required = true;
-                groupCodigoSemanal.classList.remove('hidden-field');
-                inputCodigoSemanal.required = true;
-            } else if (tipo === 'Ambos') {
-                btnTipoAmbos.classList.add('active');
-                groupCodigoTemporada.classList.remove('hidden-field');
-                inputCodigoTemporada.required = true;
-                groupCodigoSemanal.classList.remove('hidden-field');
-                inputCodigoSemanal.required = true;
-            }
+            document.getElementById('form-content').classList.remove('hidden-field');
+            document.querySelectorAll('.tipo-juego-selector button').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-tipo-' + tipo.toLowerCase()).classList.add('active');
+            document.getElementById('group-nombre').classList.toggle('hidden-field', tipo !== 'Semanal');
+            document.getElementById('group-codigo-temporada').classList.toggle('hidden-field', tipo === 'Semanal');
+            document.getElementById('group-codigo-semanal').classList.toggle('hidden-field', tipo === 'Temporada');
         }
         
-        btnTipoTemporada.addEventListener('click', () => seleccionarTipoJuego('Temporada'));
-        btnTipoSemanal.addEventListener('click', () => seleccionarTipoJuego('Semanal'));
-        btnTipoAmbos.addEventListener('click', () => seleccionarTipoJuego('Ambos'));
+        document.getElementById('btn-tipo-temporada').onclick = () => seleccionarTipoJuego('Temporada');
+        document.getElementById('btn-tipo-semanal').onclick = () => seleccionarTipoJuego('Semanal');
+        document.getElementById('btn-tipo-ambos').onclick = () => seleccionarTipoJuego('Ambos');
 
-
-        // --- 3. Cargar Partidos (GET) ---
-        jornadaSelect.addEventListener('change', async () => {
-            const jornadaNum = jornadaSelect.value;
-            if (!jornadaNum) {
-                limpiarFormularioPartidos();
-                return;
-            }
-            
-            mostrarLoading(true);
-            mostrarMensaje(false);
-            limpiarFormularioPartidos(); 
-
+        jornadaSelect.onchange = async () => {
+            if (!jornadaSelect.value) return;
+            document.getElementById('loading').style.display = 'block';
             try {
-                const url = `${SCRIPT_URL}?jornada=${jornadaNum}`;
-                const response = await fetch(url);
-                const data = await response.json();
-
+                const res = await fetch(`${SCRIPT_URL}?jornada=${jornadaSelect.value}`);
+                const data = await res.json();
                 if (data.status === 'ok') {
-                    partidosData = data.partidos;
-                    actualizarFechaLimite(data.fechaLimite);
-                    dibujarPartidos(partidosData);
-                    mostrarElementosFormulario(true);
-                } else {
-                    throw new Error(data.message);
+                    dibujarPartidos(data.partidos);
+                    document.getElementById('fecha-limite').value = new Date(data.fechaLimite).toLocaleString();
+                    document.getElementById('extras-container').style.display = 'block';
+                    document.getElementById('submit-container').style.display = 'block';
                 }
+            } catch (e) { alert("Error al cargar jornada"); }
+            finally { document.getElementById('loading').style.display = 'none'; }
+        };
 
-            } catch (error) {
-                mostrarMensaje('error', `Error al cargar: ${error.message}`);
-            } finally {
-                mostrarLoading(false);
-            }
-        });
-
-        // --- 4. Dibujar Partidos y Comodín ---
         function dibujarPartidos(partidos) {
-            partidosPlaceholder.style.display = 'none';
-            partidosContainer.innerHTML = ''; // Limpiar partidos
-            
-            comodinSelect.innerHTML = '';
-            const defaultOption = document.createElement('option');
-            defaultOption.value = "";
-            defaultOption.textContent = "Selecciona tu comodín...";
-            comodinSelect.appendChild(defaultOption);
-
-            partidos.forEach((partido, index) => {
-                // A. Dibujar el partido en la lista
-                const partidoDiv = document.createElement('div');
-                partidoDiv.className = 'partido';
-                
-                partidoDiv.innerHTML = `
-                    <span class="equipo equipo-local">${partido.local}</span>
-                    <input type="number" name="p${index}_local" class="local" min="0" required>
-                    <span class="vs-divider">vs</span>
-                    <input type="number" name="p${index}_visita" class="visitante" min="0" required>
-                    <span class="equipo equipo-visitante">${partido.visitante}</span>
-                `;
-                partidosContainer.appendChild(partidoDiv);
-
-                // B. Añadir el partido al <select> de comodín
-                const comodinOption = document.createElement('option');
-                comodinOption.value = index; // El valor es 0, 1, 2, etc.
-                comodinOption.textContent = `P${index+1}: ${partido.local} vs ${partido.visitante}`;
-                comodinSelect.appendChild(comodinOption);
+            const cont = document.getElementById('partidos-container');
+            const comodin = document.getElementById('comodin-select');
+            cont.innerHTML = '';
+            comodin.innerHTML = '<option value="">Selecciona comodín...</option>';
+            partidos.forEach((p, i) => {
+                cont.innerHTML += `<div class="partido"><span class="equipo equipo-local">${p.local}</span><input type="number" name="p${i}_local" required><span class="vs-divider">vs</span><input type="number" name="p${i}_visita" required><span class="equipo equipo-visitante">${p.visitante}</span></div>`;
+                comodin.innerHTML += `<option value="${i+1}">P${i+1}: ${p.local} vs ${p.visitante}</option>`;
             });
         }
-        
-        // --- 5. Enviar Formulario (POST) ---
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
-            // Validar que se haya elegido un tipo
-            if (tipoJuegoInput.value === "") {
-                mostrarMensaje('error', 'Error: Debes seleccionar un tipo de juego (Temporada, Semanal o Ambos) primero.');
-                window.scrollTo(0, 0);
-                return;
-            }
 
-            mostrarLoading(true);
-            btnEnviar.disabled = true;
-            mostrarMensaje(false);
+        form.onsubmit = async (e) => {
+            e.preventDefault();
+            const tipo = tipoJuegoInput.value;
+            const jornada = parseInt(jornadaSelect.value);
+            const codTemp = document.getElementById('codigo_temporada').value;
+
+            document.getElementById('loading').style.display = 'block';
+            let infoDeuda = { deuda: 0, bloqueado: false, permitido: false };
             
+            if ((tipo === 'Temporada' || tipo === 'Ambos') && codTemp) {
+                try {
+                    const res = await fetch(`${SCRIPT_URL}?accion=verificarDeuda&codigo=${codTemp}&jornada=${jornada}`);
+                    infoDeuda = await res.json();
+                } catch (err) { console.error(err); }
+            }
+            document.getElementById('loading').style.display = 'none';
+
+            // Evaluamos en qué estado mostrar el Modal
+            if (infoDeuda.bloqueado) {
+                mostrarConfirmacion('BLOQUEO', infoDeuda);
+            } else if (infoDeuda.permitido && infoDeuda.deuda > 0) {
+                mostrarConfirmacion('PERMITIDO_CON_DEUDA', infoDeuda); // <-- NUEVO ESTADO ESPECIAL
+            } else if (infoDeuda.deuda > 0) {
+                mostrarConfirmacion('ADVERTENCIA', infoDeuda);
+            } else {
+                mostrarConfirmacion('LIMPIO', infoDeuda);
+            }
+        };
+
+        function mostrarConfirmacion(estado, info) {
+            const body = document.getElementById('modal-body');
+            const titulo = document.getElementById('modal-titulo');
+            const btnConfirm = document.querySelector('.btn-confirm');
+            
+            titulo.style.color = (estado === 'BLOQUEO') ? '#e74c3c' : '#0b4f6c';
+            btnConfirm.style.display = (estado === 'BLOQUEO') ? 'none' : 'block';
+
+            if (estado === 'LIMPIO') {
+                body.innerHTML = `<p style="font-weight:bold;">✅ ¡Tu cuenta está al corriente!</p>
+                                  <p>Recuerda revisar bien tus resultados antes de enviar.<br>¿Estás seguro de tu pronóstico?</p>`;
+            } 
+            else if (estado === 'PERMITIDO_CON_DEUDA') {
+                // El diseño solicitado por ti para pases de administrador con deuda
+                body.innerHTML = `
+                    <p style="color:#1d976c; font-weight:bold; font-size:1.2em;">⭐ PERMISO ESPECIAL ACTIVO</p>
+                    <p style="font-weight:bold; color:#e67e22; margin: 10px 0;">PAGO PENDIENTE: Debes $${info.deuda}</p>
+                    <p style="font-size:0.95em; line-height:1.4; color:#555;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
+                    <div class="banco-info">
+                        <b>NU México</b> | Eduardo De La Fuente<br>
+                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
+                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
+                    </div>
+                    <a href="https://wa.me/528131071919?text=Hola Eduardo, gracias por el pase VIP para la quiniela. Aquí tengo pendiente mi saldo de $${info.deuda}" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
+                    <p style="margin-top:15px; font-weight:bold;">¿Deseas enviar tus resultados ahora?</p>
+                `;
+            }
+            else if (estado === 'ADVERTENCIA') {
+                body.innerHTML = `
+                    <p style="color:#e67e22; font-weight:bold; font-size:1.2em;">⚠️ PAGO PENDIENTE: Debes $${info.deuda}</p>
+                    <p style="font-size:0.9em;">Recuerda pagar antes de la <b>Jornada ${info.jornadaLimite}</b> para evitar el bloqueo automático de tu código.</p>
+                    <div class="banco-info">
+                        <b>NU México</b> | Eduardo De La Fuente<br>
+                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
+                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
+                    </div>
+                    <a href="https://wa.me/528131071919?text=Hola Eduardo, envío comprobante de mi saldo pendiente ($${info.deuda})" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
+                    <p style="margin-top:15px; font-weight:bold;">¿Deseas enviar tus resultados ahora?</p>
+                `;
+            }
+            else if (estado === 'BLOQUEO') {
+                body.innerHTML = `
+                    <p style="color:#e74c3c; font-weight:bold;">🛑 ACCESO BLOQUEADO</p>
+                    <p>${info.motivo}</p>
+                    <div class="banco-info">
+                        <b>NU México</b> | CLABE: 638180000010006302
+                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">COPIAR</button>
+                    </div>
+                    <a href="https://wa.me/528131071919?text=Hola Eduardo, mi cuenta está bloqueada y debo $${info.deuda}. Deseo liquidar." target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Informar pago al Administrador</a>
+                `;
+            }
+            document.getElementById('modal-confirmacion').style.display = 'flex';
+        }
+
+        async function ejecutarEnvioFinal() {
+            cerrarModal();
+            document.getElementById('loading').style.display = 'block';
             const formData = new FormData(form);
             const data = Object.fromEntries(formData.entries());
-            
             data.accion = "enviarPronostico";
-
             try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: new URLSearchParams(data)
-                });
-                
-                const resJson = await response.json();
-
-                if (resJson.status === 'ok') {
-                    mostrarMensaje('success', resJson.message);
-                    form.reset();
-                    limpiarFormularioPartidos();
-                    // No reseteamos el tipo de juego, pero sí los botones
-                    seleccionarTipoJuego(tipoJuegoInput.value); 
-                    window.scrollTo(0, 0);
-                } else {
-                    throw new Error(resJson.message);
-                }
-
-            } catch (error) {
-                mostrarMensaje('error', `Error al enviar: ${error.message}`);
-            } finally {
-                mostrarLoading(false);
-                btnEnviar.disabled = false;
-            }
-        });
-
-        // --- 6. Funciones Auxiliares ---
-        function limpiarFormularioPartidos() {
-            partidosData = [];
-            partidosContainer.innerHTML = '';
-            partidosPlaceholder.style.display = 'block';
-            fechaLimiteInput.value = '';
-            comodinSelect.innerHTML = '<option value="">Cargando partidos...</option>';
-            mostrarElementosFormulario(false);
+                const res = await fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams(data) });
+                const json = await res.json();
+                alert(json.message);
+                if (json.status === 'ok') location.reload();
+            } catch (e) { alert("Error al enviar"); }
+            finally { document.getElementById('loading').style.display = 'none'; }
         }
 
-        function actualizarFechaLimite(fechaStr) {
-            if (fechaStr) {
-                const fecha = new Date(fechaStr);
-                fechaLimiteInput.value = fecha.toLocaleString('es-MX', {
-                    dateStyle: 'medium',
-                    timeStyle: 'short'
-                });
-            } else {
-                fechaLimiteInput.value = 'No definida';
-            }
-        }
-        
-        function mostrarElementosFormulario(mostrar) {
-            extrasContainer.style.display = mostrar ? 'block' : 'none';
-            submitContainer.style.display = mostrar ? 'block' : 'none';
-        }
-
-        function mostrarLoading(mostrar) {
-            loadingDiv.style.display = mostrar ? 'block' : 'none';
-        }
-
-        function mostrarMensaje(tipo, texto) {
-            if (tipo === false) {
-                mensajeDiv.style.display = 'none';
-                return;
-            }
-            mensajeDiv.className = tipo;
-            mensajeDiv.textContent = texto;
-            mensajeDiv.style.display = 'block';
-        }
-
+        function cerrarModal() { document.getElementById('modal-confirmacion').style.display = 'none'; }
+        function copiarClabe() { navigator.clipboard.writeText("638180000010006302"); alert("✅ CLABE copiada"); }
     </script>
 </body>
 </html>
