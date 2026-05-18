@@ -10,7 +10,7 @@
     <style>
         body {
             font-family: 'Roboto', sans-serif;
-            margin: 0; padding: 10px; /* Reducido para dar más espacio en celular */
+            margin: 0; padding: 10px;
             background: linear-gradient(135deg, #0b4f6c, #1d976c);
             background-size: 200% 200%;
             animation: gradientBG 15s ease infinite;
@@ -49,14 +49,8 @@
         .full-width { grid-column: 1 / -1; }
         .hidden-field { display: none; }
 
-        /* CORRECCIÓN CLAVE: Ajuste de cajas de texto para que no se desborden */
         input[type="text"], input[type="number"], input[type="password"], select { 
-            padding: 12px; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            font-size: 1em; 
-            width: 100%; 
-            box-sizing: border-box; 
+            padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; width: 100%; box-sizing: border-box; 
         }
 
         .partido { display: grid; grid-template-columns: 1fr 50px auto 50px 1fr; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid #eee; }
@@ -97,7 +91,7 @@
             .partido { grid-template-columns: 1fr 42px auto 42px 1fr; gap: 4px; }
             .equipo { font-size: 0.85em; }
         }
-    </style>            
+    </style>
 </head>
 <body>
     <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
@@ -182,6 +176,7 @@
     <div id="loading"><div class="spinner"></div>Procesando datos...</div>
 
     <script>
+        // TU URL TOTALMENTE VINCULADA DE FORMA CORRECTA
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWENw0FxnI0WNkkX34k2AfRSOhNiBmxYodgR4fRQe5sF_4vOeCQsH_LPrv9epSiNTurQ/exec";
 
         const form = document.getElementById('quiniela-form');
@@ -202,19 +197,27 @@
         document.getElementById('btn-tipo-semanal').onclick = () => seleccionarTipoJuego('Semanal');
         document.getElementById('btn-tipo-ambos').onclick = () => seleccionarTipoJuego('Ambos');
 
+        // --- CARGA DE JORNADAS OPTIMIZADA CON DETECTOR DE TEXTO DE EXCEL ---
         jornadaSelect.onchange = async () => {
             if (!jornadaSelect.value) return;
             document.getElementById('loading').style.display = 'block';
             try {
                 const res = await fetch(`${SCRIPT_URL}?jornada=${jornadaSelect.value}`);
                 const data = await res.json();
+                
                 if (data.status === 'ok') {
                     dibujarPartidos(data.partidos);
                     document.getElementById('fecha-limite').value = new Date(data.fechaLimite).toLocaleString();
                     document.getElementById('extras-container').style.display = 'block';
                     document.getElementById('submit-container').style.display = 'block';
+                } else {
+                    // Si el Excel arroja un error (ej. faltan partidos), te dirá exactamente qué pasa
+                    alert("Aviso del Sistema: " + data.message);
                 }
-            } catch (e) { alert("Error al cargar jornada"); }
+            } catch (e) { 
+                // Si entra aquí es porque Google devolvió una pantalla de inicio de sesión de Google (Acceso Denegado)
+                alert("Error al cargar jornada: El enlace de Google Sheets no responde correctamente. Revisa que los permisos de tu Web App estén configurados para acceso de 'Cualquiera'."); 
+            }
             finally { document.getElementById('loading').style.display = 'none'; }
         };
 
@@ -234,28 +237,47 @@
             const tipo = tipoJuegoInput.value;
             const jornada = parseInt(jornadaSelect.value);
             const codTemp = document.getElementById('codigo_temporada').value;
+            const codSem = document.getElementById('codigo_semanal').value;
 
             document.getElementById('loading').style.display = 'block';
-            let infoDeuda = { deuda: 0, bloqueado: false, permitido: false };
+            
+            let infoDeudaTemp = { deuda: 0, bloqueado: false, permitido: false };
+            let infoSemanal = null;
             
             if ((tipo === 'Temporada' || tipo === 'Ambos') && codTemp) {
                 try {
-                    const res = await fetch(`${SCRIPT_URL}?accion=verificarDeuda&codigo=${codTemp}&jornada=${jornada}`);
-                    infoDeuda = await res.json();
+                    const res = await fetch(`${SCRIPT_URL}?accion=verificarDeuda&codigo=${encodeURIComponent(codTemp)}&jornada=${jornada}`);
+                    infoDeudaTemp = await res.json();
                 } catch (err) { console.error(err); }
             }
+
+            if ((tipo === 'Semanal' || tipo === 'Ambos') && codSem) {
+                try {
+                    const resSem = await fetch(`${SCRIPT_URL}?accion=verificarSemanal&codigo=${encodeURIComponent(codSem)}&jornada=${jornada}`);
+                    const jsonSem = await resSem.json();
+                    if (jsonSem.status === 'ok') {
+                        infoSemanal = jsonSem;
+                    } else {
+                        document.getElementById('loading').style.display = 'none';
+                        alert("Error Semanal: " + jsonSem.message);
+                        return;
+                    }
+                } catch (err) { console.error(err); }
+            }
+            
             document.getElementById('loading').style.display = 'none';
 
-            // Evaluamos en qué estado mostrar el Modal
-            if (infoDeuda.bloqueado) {
-                mostrarConfirmacion('BLOQUEO', infoDeuda);
-            } else if (infoDeuda.permitido && infoDeuda.deuda > 0) {
-                mostrarConfirmacion('PERMITIDO_CON_DEUDA', infoDeuda); // <-- NUEVO ESTADO ESPECIAL
-            } else if (infoDeuda.deuda > 0) {
-                mostrarConfirmacion('ADVERTENCIA', infoDeuda);
-            } else {
-                mostrarConfirmacion('LIMPIO', infoDeuda);
+            if (infoDeudaTemp.bloqueado) {
+                mostrarConfirmacion('BLOQUEO', infoDeudaTemp);
+                return;
             }
+
+            if (infoSemanal && infoSemanal.creditos <= 0) {
+                mostrarConfirmacion('SEMANAL_SIN_CREDITOS', infoSemanal);
+                return;
+            }
+
+            mostrarConfirmacion('PROCESAR_MODAL', { temp: infoDeudaTemp, sem: infoSemanal, tipo: tipo });
         };
 
         function mostrarConfirmacion(estado, info) {
@@ -263,51 +285,158 @@
             const titulo = document.getElementById('modal-titulo');
             const btnConfirm = document.querySelector('.btn-confirm');
             
-            titulo.style.color = (estado === 'BLOQUEO') ? '#e74c3c' : '#0b4f6c';
-            btnConfirm.style.display = (estado === 'BLOQUEO') ? 'none' : 'block';
+            titulo.style.color = '#0b4f6c';
+            btnConfirm.style.display = 'block';
+            titulo.textContent = '¿Confirmas tu envío?';
 
-            if (estado === 'LIMPIO') {
-                body.innerHTML = `<p style="font-weight:bold;">✅ ¡Tu cuenta está al corriente!</p>
-                                  <p>Recuerda revisar bien tus resultados antes de enviar.<br>¿Estás seguro de tu pronóstico?</p>`;
-            } 
-            else if (estado === 'PERMITIDO_CON_DEUDA') {
-                // El diseño solicitado por ti para pases de administrador con deuda
+            if (estado === 'BLOQUEO') {
+                titulo.style.color = '#e74c3c';
+                titulo.textContent = '🛑 ACCESO BLOQUEADO';
+                btnConfirm.style.display = 'none';
                 body.innerHTML = `
-                    <p style="color:#1d976c; font-weight:bold; font-size:1.2em;">⭐ PERMISO ESPECIAL ACTIVO</p>
-                    <p style="font-weight:bold; color:#e67e22; margin: 10px 0;">PAGO PENDIENTE: Debes $${info.deuda}</p>
-                    <p style="font-size:0.95em; line-height:1.4; color:#555;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
-                    <div class="banco-info">
-                        <b>NU México</b> | Eduardo De La Fuente<br>
-                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
-                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
-                    </div>
-                    <a href="https://wa.me/528131071919?text=Hola Eduardo, gracias por el pase VIP para la quiniela. Aquí tengo pendiente mi saldo de $${info.deuda}" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
-                    <p style="margin-top:15px; font-weight:bold;">¿Deseas enviar tus resultados ahora?</p>
-                `;
-            }
-            else if (estado === 'ADVERTENCIA') {
-                body.innerHTML = `
-                    <p style="color:#e67e22; font-weight:bold; font-size:1.2em;">⚠️ PAGO PENDIENTE: Debes $${info.deuda}</p>
-                    <p style="font-size:0.9em;">Recuerda pagar antes de la <b>Jornada ${info.jornadaLimite}</b> para evitar el bloqueo automático de tu código.</p>
-                    <div class="banco-info">
-                        <b>NU México</b> | Eduardo De La Fuente<br>
-                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
-                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
-                    </div>
-                    <a href="https://wa.me/528131071919?text=Hola Eduardo, envío comprobante de mi saldo pendiente ($${info.deuda})" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
-                    <p style="margin-top:15px; font-weight:bold;">¿Deseas enviar tus resultados ahora?</p>
-                `;
-            }
-            else if (estado === 'BLOQUEO') {
-                body.innerHTML = `
-                    <p style="color:#e74c3c; font-weight:bold;">🛑 ACCESO BLOQUEADO</p>
                     <p>${info.motivo}</p>
                     <div class="banco-info">
                         <b>NU México</b> | CLABE: 638180000010006302
-                        <button onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">COPIAR</button>
+                        <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">COPIAR</button>
                     </div>
                     <a href="https://wa.me/528131071919?text=Hola Eduardo, mi cuenta está bloqueada y debo $${info.deuda}. Deseo liquidar." target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Informar pago al Administrador</a>
                 `;
+            } 
+            else if (estado === 'SEMANAL_SIN_CREDITOS') {
+                titulo.style.color = '#e74c3c';
+                titulo.textContent = '🛑 SIN CRÉDITOS';
+                btnConfirm.style.display = 'none';
+                body.innerHTML = `
+                    <p style="font-weight:bold; font-size:1.1em; color:#e74c3c;">no cuentas con creditos para Semanal , Favor de comprar para Participar</p>
+                    <div class="banco-info" style="margin-top:15px;">
+                        <b>NU México</b> | Eduardo De La Fuente<br>
+                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
+                        <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
+                    </div>
+                    <a href="https://wa.me/528131071919?text=Hola Eduardo, mi código Semanal no tiene créditos disponibles. Deseo comprar." target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Solicitar Créditos por WhatsApp</a>
+                `;
+            }
+            else if (estado === 'PROCESAR_MODAL') {
+                let htmlContent = "";
+                let requiereDatosBanco = false;
+                let deudasDetectadas = [];
+
+                if (info.tipo === 'Temporada') {
+                    if (info.temp.permitido && info.temp.deuda > 0) {
+                        htmlContent = `
+                            <p style="color:#1d976c; font-weight:bold; font-size:1.2em; margin:5px 0;">⭐ PERMISO ESPECIAL ACTIVO</p>
+                            <p style="font-weight:bold; color:#e67e22; margin: 10px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
+                            <p style="font-size:0.95em; line-height:1.4; color:#555;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
+                        `;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
+                    } else if (info.temp.deuda > 0) {
+                        htmlContent = `
+                            <p style="color:#e67e22; font-weight:bold; font-size:1.2em; margin:5px 0;">⚠️ PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
+                            <p style="font-size:0.9em; color:#555;">Recuerda pagar antes de la <b>Jornada ${info.temp.jornadaLimite}</b> para evitar el bloqueo automático de tu código.</p>
+                        `;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
+                    } else {
+                        htmlContent = `<p style="font-weight:bold; color:#2e7d32; font-size:1.1em; margin:10px 0;">✅ ¡Tu cuenta de Temporada está al corriente!</p>`;
+                    }
+                } 
+                
+                else if (info.tipo === 'Semanal') {
+                    let favor = parseFloat(info.sem.saldoFavor) || 0;
+                    let debeTexto = info.sem.estatusDebe.toUpperCase();
+
+                    if (favor > 0) {
+                        htmlContent = `<p style="color:#1d976c; font-weight:bold; font-size:1.15em; margin:10px 0;">💰 Tienes $${favor} a favor y ${info.sem.creditos} crédito(s).</p>`;
+                    } else if (debeTexto.includes("PENDIENTE")) {
+                        htmlContent = `<p style="color:#e67e22; font-weight:bold; font-size:1.15em; margin:10px 0;">⚠️ Tienes ${info.sem.estatusDebe} pesos, cuentas con ${info.sem.creditos} créditos.</p>`;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Semanal (${info.sem.estatusDebe})`);
+                    } else {
+                        htmlContent = `<p style="color:#2e7d32; font-weight:bold; font-size:1.15em; margin:10px 0;">✅ Vas al corriente, tienes ${info.sem.creditos} crédito(s) a favor.</p>`;
+                    }
+                } 
+                
+                else if (info.tipo === 'Ambos') {
+                    let htmlTemp = "";
+                    let htmlSem = "";
+
+                    if (info.temp.permitido && info.temp.deuda > 0) {
+                        htmlTemp = `
+                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
+                                <p style="color:#1d976c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">🏆 ESTATUS TEMPORADA</p>
+                                <p style="color:#1d976c; font-weight:bold; font-size:1.1em; margin:5px 0;">⭐ PERMISO ESPECIAL ACTIVO</p>
+                                <p style="font-weight:bold; color:#e67e22; margin: 5px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
+                                <p style="font-size:0.85em; line-height:1.4; color:#666; margin:5px 0;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
+                            </div>
+                        `;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
+                    } else if (info.temp.deuda > 0) {
+                        htmlTemp = `
+                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
+                                <p style="color:#e67e22; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">🏆 ESTATUS TEMPORADA</p>
+                                <p style="font-weight:bold; color:#e67e22; margin: 5px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
+                                <p style="font-size:0.85em; color:#666; margin:5px 0;">Recuerda pagar antes de la Jornada ${info.temp.jornadaLimite} para evitar bloqueos.</p>
+                            </div>
+                        `;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
+                    } else {
+                        htmlTemp = `
+                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
+                                <p style="color:#2e7d32; font-weight:bold; font-size:1.15em; margin:0;">✅ TEMPORADA: ¡Al corriente!</p>
+                            </div>
+                        `;
+                    }
+
+                    let favorSem = parseFloat(info.sem.saldoFavor) || 0;
+                    let debeTextoSem = info.sem.estatusDebe.toUpperCase();
+
+                    if (favorSem > 0) {
+                        htmlSem = `
+                            <div style="margin-bottom: 15px; text-align:center;">
+                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
+                                <p style="color:#1d976c; font-weight:bold; font-size:1.1em; margin:0;">💰 Tienes $${favorSem} a favor y ${info.sem.creditos} crédito(s).</p>
+                            </div>
+                        `;
+                    } else if (debeTextoSem.includes("PENDIENTE")) {
+                        htmlSem = `
+                            <div style="margin-bottom: 15px; text-align:center;">
+                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
+                                <p style="color:#e67e22; font-weight:bold; font-size:1.1em; margin:0;">⚠️ Tienes ${info.sem.estatusDebe} pesos, cuentas con ${info.sem.creditos} créditos.</p>
+                            </div>
+                        `;
+                        requiereDatosBanco = true;
+                        deudasDetectadas.push(`Semanal (${info.sem.estatusDebe})`);
+                    } else {
+                        htmlSem = `
+                            <div style="margin-bottom: 15px; text-align:center;">
+                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
+                                <p style="color:#2e7d32; font-weight:bold; font-size:1.1em; margin:0;">✅ Vas al corriente, tienes ${info.sem.creditos} crédito(s) a favor.</p>
+                            </div>
+                        `;
+                    }
+
+                    htmlContent = `${htmlTemp}${htmlSem}`;
+                }
+
+                if (requiereDatosBanco) {
+                    let desgloseDeudas = deudasDetectadas.join(" y ");
+                    let mensajeWhatsApp = `Hola Eduardo, envío comprobante de mi saldo de: ${desgloseDeudas}`;
+                    
+                    htmlContent += `
+                        <div class="banco-info" style="margin-top:15px;">
+                            <b>NU México</b> | Eduardo De La Fuente<br>
+                            CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
+                            <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
+                        </div>
+                        <a href="https://wa.me/528131071919?text=${encodeURIComponent(mensajeWhatsApp)}" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
+                    `;
+                }
+
+                htmlContent += `<p style="margin-top:20px; font-weight:bold; text-align:center;">Recuerda revisar bien tus resultados antes de enviar.<br>¿Estás seguro de tu pronóstico?</p>`;
+                body.innerHTML = htmlContent;
             }
             document.getElementById('modal-confirmacion').style.display = 'flex';
         }
@@ -327,6 +456,7 @@
             finally { document.getElementById('loading').style.display = 'none'; }
         }
 
+        // AUXILIARES
         function cerrarModal() { document.getElementById('modal-confirmacion').style.display = 'none'; }
         function copiarClabe() { navigator.clipboard.writeText("638180000010006302"); alert("✅ CLABE copiada"); }
     </script>
