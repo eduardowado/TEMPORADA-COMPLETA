@@ -17,72 +17,91 @@
             display: flex; justify-content: center; align-items: center; min-height: 100vh;
             box-sizing: border-box;
         }
-        
         @keyframes gradientBG { 0% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } 100% { background-position: 0% 50%; } }
 
         .btn-regreso-fijo {
             position: fixed; top: 15px; right: 15px;
             background-color: #ffcc80; color: #5d4037; border: 2px solid #ffffff;
-            text-decoration: none; padding: 8px 12px; border-radius: 30px; 
-            font-weight: bold; font-size: 12px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2); 
+            text-decoration: none; padding: 8px 12px; border-radius: 30px;
+            font-weight: bold; font-size: 12px; z-index: 9999; box-shadow: 0 4px 8px rgba(0,0,0,0.2);
         }
-
         .container {
             background-color: #ffffff; padding: 25px 20px; border-radius: 20px;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
             max-width: 700px; width: 100%; box-sizing: border-box;
         }
-
         h1 { font-family: 'Anton', sans-serif; color: #0b4f6c; text-align: center; text-transform: uppercase; margin: 0 0 20px 0; }
-
         .form-section { margin-bottom: 25px; border-bottom: 2px solid #f0f0f0; padding-bottom: 25px; }
-        
-        .tipo-juego-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 25px; }
+
+        .tipo-juego-selector { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .tipo-juego-selector button {
             padding: 12px 10px; font-weight: 700; border: 2px solid #ccc;
             background-color: #f9f9f9; color: #555; border-radius: 8px; cursor: pointer;
         }
         .tipo-juego-selector button.active { background-color: #1d976c; color: white; border-color: #1d976c; }
 
+        .btn-ya-envie {
+            width: 100%; padding: 11px; background: #fff; color: #0b4f6c; border: 2px solid #0b4f6c;
+            border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.95em;
+        }
+
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         .form-group { display: flex; flex-direction: column; width: 100%; box-sizing: border-box; }
         .full-width { grid-column: 1 / -1; }
         .hidden-field { display: none; }
 
-        input[type="text"], input[type="number"], input[type="password"], select { 
-            padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; width: 100%; box-sizing: border-box; 
+        input[type="text"], input[type="number"], input[type="password"], select {
+            padding: 12px; border: 1px solid #ccc; border-radius: 8px; font-size: 1em; width: 100%; box-sizing: border-box;
         }
+        .input-ojo { display: flex; gap: 6px; }
+        .input-ojo input { flex: 1; }
+        .ojo { border: 1px solid #0b4f6c; background: #fff; color: #0b4f6c; border-radius: 8px; padding: 0 10px; font-weight: 700; font-size: 0.8em; cursor: pointer; white-space: nowrap; }
+        .hint { font-size: 0.85em; margin-top: 5px; min-height: 1em; color: #666; }
+        .hint.ok { color: #2e7d32; font-weight: 700; }
+        .hint.bad { color: #c0392b; font-weight: 700; }
 
         .partido { display: grid; grid-template-columns: 1fr 50px auto 50px 1fr; align-items: center; gap: 8px; padding: 12px 0; border-bottom: 1px solid #eee; }
         .equipo { font-weight: 700; font-size: 0.9em; }
         .equipo-local { text-align: right; }
         .vs-divider { font-size: 0.8em; color: #777; font-weight: 700; text-align: center; }
         .partido input { width: 100%; text-align: center; padding: 10px 5px; box-sizing: border-box; }
-        
+
         #btn-enviar {
             width: 100%; padding: 16px; font-family: 'Anton', sans-serif; font-size: 1.3em;
             color: #fff; background: linear-gradient(45deg, #e74c3c, #c0392b);
             border: none; border-radius: 10px; cursor: pointer; transition: 0.2s;
         }
+        #btn-enviar:disabled { background: #b0b0b0; cursor: not-allowed; }
 
-        /* --- ESTILOS MODAL INTELIGENTE --- */
-        #modal-confirmacion {
+        .aviso { display: none; padding: 12px; border-radius: 10px; margin-bottom: 15px; font-weight: 700; text-align: center; font-size: 0.95em; }
+        .aviso.warn { background: #fff3cd; color: #856404; border: 1px solid #ffeeba; }
+        .aviso.err { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .aviso button { margin-top: 8px; padding: 8px 14px; border: none; border-radius: 8px; background: #0b4f6c; color: #fff; font-weight: 700; cursor: pointer; }
+
+        .modal-ov {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.85); z-index: 20000; display: none;
             justify-content: center; align-items: center;
         }
         .modal-content {
-            background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 480px; text-align: center; box-sizing: border-box;
+            background: white; padding: 25px; border-radius: 20px; width: 90%; max-width: 480px; text-align: center; box-sizing: border-box; max-height: 90vh; overflow-y: auto;
         }
-        .banco-info {
-            background: #f1f8e9; border: 1px dashed #2e7d32; padding: 15px; border-radius: 12px; margin: 15px 0; text-align: left;
-        }
+        .banco-info { background: #f1f8e9; border: 1px dashed #2e7d32; padding: 15px; border-radius: 12px; margin: 15px 0; text-align: left; }
         .btn-confirm { background: #1d976c; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; flex: 1; }
+        .btn-confirm:disabled { background: #9bbfb2; }
         .btn-cancel { background: #95a5a6; color: white; border: none; padding: 12px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; flex: 1; }
-        
-        #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 30000; background: white; padding: 30px; border-radius: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1d976c; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 10px; }
+        .bloque { margin-bottom: 18px; padding-bottom: 14px; border-bottom: 1px dashed #eee; text-align: center; }
+        .bloque p { margin: 5px 0; }
+
+        #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 30000; background: white; padding: 30px; border-radius: 15px; display: none; box-shadow: 0 10px 30px rgba(0,0,0,0.4); text-align: center; max-width: 80%; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #1d976c; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto 10px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        #resumen { display: none; }
+        #resumen h2 { text-align: center; color: #1d976c; margin-top: 0; }
+        .res-fila { display: flex; justify-content: space-between; gap: 8px; padding: 8px 0; border-bottom: 1px solid #eee; font-size: 0.92em; }
+        .res-fila.com { background: #fff9db; }
+        .envio-card { text-align: left; border: 1px solid #c8e6c9; background: #f1f8e9; border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 0.9em; }
 
         @media (max-width: 600px) {
             .container { padding: 20px 15px; }
@@ -95,11 +114,21 @@
 </head>
 <body>
     <a href="https://eduardowado.github.io/Bienvenido-Quinelas-De-La-Fuente/" class="btn-regreso-fijo">↩ Regresar</a>
-    
+
     <div class="container">
         <h1>Quiniela de la Fuente</h1>
 
-        <form id="quiniela-form">
+        <div id="aviso-red" class="aviso err"></div>
+
+        <!-- RESUMEN DESPUÉS DE ENVIAR -->
+        <div id="resumen">
+            <h2 id="resumen-titulo">✅ ¡Quiniela recibida!</h2>
+            <div id="resumen-detalle"></div>
+            <p style="text-align:center; font-weight:700; color:#0b4f6c;">📸 Toma una captura de esta pantalla: es tu comprobante.</p>
+            <button type="button" class="btn-confirm" style="width:100%;" onclick="location.reload()">Enviar otra quiniela</button>
+        </div>
+
+        <form id="quiniela-form" autocomplete="off">
             <div class="form-section">
                 <label style="text-align:center; display:block; margin-bottom: 15px;">Selecciona tu tipo de juego:</label>
                 <div class="tipo-juego-selector">
@@ -107,17 +136,18 @@
                     <button type="button" id="btn-tipo-semanal" data-tipo="Semanal">Semanal</button>
                     <button type="button" id="btn-tipo-ambos" data-tipo="Ambos">Ambos</button>
                 </div>
+                <button type="button" class="btn-ya-envie" id="btn-ya-envie">🔎 ¿Ya envié mi quiniela?</button>
                 <input type="hidden" id="tipo_juego" name="tipo_juego" value="">
             </div>
 
             <div id="form-content" class="hidden-field">
                 <div class="form-section">
+                    <div id="aviso-jornada" class="aviso warn"></div>
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Jornada:</label>
                             <select id="jornada" name="jornada" required>
                                 <option value="">Selecciona...</option>
-                                <script>for(let i=1;i<=17;i++){document.write(`<option value="${i}">Jornada ${i}</option>`);}</script>
                             </select>
                         </div>
                         <div class="form-group">
@@ -126,15 +156,24 @@
                         </div>
                         <div class="form-group full-width hidden-field" id="group-nombre">
                             <label>Nombre:</label>
-                            <input type="text" id="nombre_semanal" name="nombre_semanal" placeholder="Tu nombre">
+                            <input type="text" id="nombre_semanal" name="nombre_semanal" placeholder="Tu nombre" maxlength="30" autocomplete="off">
+                            <div class="hint">Si juegas varias quinielas con el mismo código, usa un nombre distinto en cada una.</div>
                         </div>
                         <div class="form-group full-width hidden-field" id="group-codigo-temporada">
                             <label>Código Temporada:</label>
-                            <input type="password" id="codigo_temporada" name="codigo_temporada" placeholder="Tu código">
+                            <div class="input-ojo">
+                                <input type="text" id="codigo_temporada" name="codigo_temporada" placeholder="Tu código" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                                <button type="button" class="ojo" data-for="codigo_temporada">🙈 Ocultar</button>
+                            </div>
+                            <div class="hint" id="hint-temp"></div>
                         </div>
                         <div class="form-group full-width hidden-field" id="group-codigo-semanal">
                             <label>Código Semanal:</label>
-                            <input type="password" id="codigo_semanal" name="codigo_semanal" placeholder="Tu código">
+                            <div class="input-ojo">
+                                <input type="text" id="codigo_semanal" name="codigo_semanal" placeholder="Tu código" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                                <button type="button" class="ojo" data-for="codigo_semanal">🙈 Ocultar</button>
+                            </div>
+                            <div class="hint" id="hint-sem"></div>
                         </div>
                     </div>
                 </div>
@@ -145,7 +184,7 @@
                     <div class="form-grid">
                         <div class="form-group">
                             <label>Total Goles:</label>
-                            <input type="number" id="totalgoles" name="totalgoles" required>
+                            <input type="number" id="totalgoles" name="totalgoles" min="0" step="1" inputmode="numeric" required>
                         </div>
                         <div class="form-group">
                             <label>Comodín (★):</label>
@@ -157,308 +196,406 @@
                 <div id="submit-container" style="display:none;">
                     <button type="submit" id="btn-enviar">Enviar Quiniela</button>
                 </div>
-            </div> 
+            </div>
         </form>
     </div>
 
-    <div id="modal-confirmacion">
+    <!-- MODAL CONFIRMACIÓN -->
+    <div class="modal-ov" id="modal-confirmacion">
         <div class="modal-content">
             <h2 id="modal-titulo" style="color: #0b4f6c; margin-top:0;">¿Confirmas tu envío?</h2>
             <div id="modal-body" style="margin-bottom: 20px;"></div>
-            
             <div style="display: flex; gap: 10px;">
-                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-                <button class="btn-confirm" onclick="ejecutarEnvioFinal()">Sí, Enviar</button>
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
+                <button type="button" class="btn-confirm" id="btn-confirm-envio" onclick="ejecutarEnvioFinal()">Sí, Enviar</button>
             </div>
         </div>
     </div>
 
-    <div id="loading"><div class="spinner"></div>Procesando datos...</div>
+    <!-- MODAL ¿YA ENVIÉ? -->
+    <div class="modal-ov" id="modal-estatus">
+        <div class="modal-content">
+            <h2 style="color:#0b4f6c; margin-top:0;">🔎 ¿Ya envié mi quiniela?</h2>
+            <p style="font-size:0.9em; color:#555;">Escribe tu código y elige la jornada. Te decimos si tu quiniela llegó.</p>
+            <div style="text-align:left;">
+                <label style="font-size:0.85em;">Jornada:</label>
+                <select id="est-jornada"></select>
+                <label style="font-size:0.85em; display:block; margin-top:10px;">Código Temporada (si juegas Temporada):</label>
+                <input type="text" id="est-cod-temp" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+                <label style="font-size:0.85em; display:block; margin-top:10px;">Código Semanal (si juegas Semanal):</label>
+                <input type="text" id="est-cod-sem" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+            </div>
+            <div id="est-resultado" style="margin-top:15px;"></div>
+            <div style="display:flex; gap:10px; margin-top:15px;">
+                <button type="button" class="btn-cancel" onclick="document.getElementById('modal-estatus').style.display='none'">Cerrar</button>
+                <button type="button" class="btn-confirm" id="btn-est-consultar">Consultar</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="loading"><div class="spinner"></div><div id="loading-text">Procesando datos...</div></div>
 
     <script>
-        // TU URL TOTALMENTE VINCULADA DE FORMA CORRECTA
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxWENw0FxnI0WNkkX34k2AfRSOhNiBmxYodgR4fRQe5sF_4vOeCQsH_LPrv9epSiNTurQ/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxBJONdeSXdCIKi0BMOz6gucga-YfPjhPDayoCWnAirGP5D86Cp5QjDrAuAoqmabbxmHw/exec";
+        const FOLIO = Date.now().toString(36) + Math.random().toString(36).slice(2, 10);
+        const $ = id => document.getElementById(id);
+        const form = $('quiniela-form');
+        const tipoJuegoInput = $('tipo_juego');
+        const jornadaSelect = $('jornada');
 
-        const form = document.getElementById('quiniela-form');
-        const tipoJuegoInput = document.getElementById('tipo_juego');
-        const jornadaSelect = document.getElementById('jornada');
-        
+        let partidosActuales = [], jornadaActiva = null, fechaLimiteISO = null, enviando = false, loaderTimer = null;
+
+        function esc(s) {
+            return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        // ---------- Red con tiempo límite ----------
+        async function fetchJSON(url, opts, ms) {
+            const c = new AbortController();
+            const t = setTimeout(() => c.abort(), ms || 25000);
+            try {
+                const r = await fetch(url, Object.assign({}, opts || {}, { signal: c.signal }));
+                return await r.json();
+            } catch (e) {
+                throw new Error(e.name === 'AbortError' ? 'TIMEOUT' : 'RED');
+            } finally { clearTimeout(t); }
+        }
+        function postForm(obj, ms) { return fetchJSON(SCRIPT_URL, { method: 'POST', body: new URLSearchParams(obj) }, ms); }
+        function msgError(e) {
+            if (e && e.message === 'TIMEOUT') return '⏱️ Tu señal está lenta y Google no respondió a tiempo. Intenta de nuevo.';
+            return '📡 No se pudo conectar. Revisa tu internet e intenta de nuevo.';
+        }
+        function cargando(show, txt) {
+            clearTimeout(loaderTimer);
+            if (show) {
+                $('loading-text').textContent = txt || 'Procesando datos...';
+                $('loading').style.display = 'block';
+                loaderTimer = setTimeout(() => { $('loading-text').textContent = 'Sigue procesando… con poca señal puede tardar un poco más.'; }, 8000);
+            } else { $('loading').style.display = 'none'; }
+        }
+        function avisoRed(msg, reintento) {
+            const a = $('aviso-red');
+            a.innerHTML = esc(msg) + (reintento ? '<br><button type="button" id="btn-reintentar">🔄 Reintentar</button>' : '');
+            a.style.display = 'block';
+            if (reintento) $('btn-reintentar').onclick = reintento;
+        }
+
+        // ---------- Selector de tipo ----------
+        for (let i = 1; i <= 17; i++) {
+            jornadaSelect.innerHTML += `<option value="${i}">Jornada ${i}</option>`;
+            $('est-jornada').innerHTML += `<option value="${i}">Jornada ${i}</option>`;
+        }
         function seleccionarTipoJuego(tipo) {
             tipoJuegoInput.value = tipo;
-            document.getElementById('form-content').classList.remove('hidden-field');
+            $('form-content').classList.remove('hidden-field');
             document.querySelectorAll('.tipo-juego-selector button').forEach(b => b.classList.remove('active'));
-            document.getElementById('btn-tipo-' + tipo.toLowerCase()).classList.add('active');
-            document.getElementById('group-nombre').classList.toggle('hidden-field', tipo !== 'Semanal');
-            document.getElementById('group-codigo-temporada').classList.toggle('hidden-field', tipo === 'Semanal');
-            document.getElementById('group-codigo-semanal').classList.toggle('hidden-field', tipo === 'Temporada');
+            $('btn-tipo-' + tipo.toLowerCase()).classList.add('active');
+            $('group-nombre').classList.toggle('hidden-field', tipo !== 'Semanal');
+            $('group-codigo-temporada').classList.toggle('hidden-field', tipo === 'Semanal');
+            $('group-codigo-semanal').classList.toggle('hidden-field', tipo === 'Temporada');
         }
-        
-        document.getElementById('btn-tipo-temporada').onclick = () => seleccionarTipoJuego('Temporada');
-        document.getElementById('btn-tipo-semanal').onclick = () => seleccionarTipoJuego('Semanal');
-        document.getElementById('btn-tipo-ambos').onclick = () => seleccionarTipoJuego('Ambos');
+        $('btn-tipo-temporada').onclick = () => seleccionarTipoJuego('Temporada');
+        $('btn-tipo-semanal').onclick = () => seleccionarTipoJuego('Semanal');
+        $('btn-tipo-ambos').onclick = () => seleccionarTipoJuego('Ambos');
 
-        // --- CARGA DE JORNADAS OPTIMIZADA CON DETECTOR DE TEXTO DE EXCEL ---
-        jornadaSelect.onchange = async () => {
-            if (!jornadaSelect.value) return;
-            document.getElementById('loading').style.display = 'block';
+        // ---------- Mostrar / ocultar código ----------
+        document.querySelectorAll('.ojo').forEach(b => {
+            b.onclick = () => {
+                const inp = $(b.dataset.for);
+                const oculto = inp.type === 'password';
+                inp.type = oculto ? 'text' : 'password';
+                b.textContent = oculto ? '🙈 Ocultar' : '👁 Mostrar';
+            };
+        });
+
+        // ---------- Validar código al salir del campo ----------
+        async function validarCampo(campo) {
+            const esTemp = campo === 'temp';
+            const inp = $(esTemp ? 'codigo_temporada' : 'codigo_semanal');
+            const hint = $(esTemp ? 'hint-temp' : 'hint-sem');
+            const v = inp.value.trim();
+            if (!v) { hint.className = 'hint'; hint.textContent = ''; return; }
+            hint.className = 'hint'; hint.textContent = 'Verificando…';
             try {
-                const res = await fetch(`${SCRIPT_URL}?jornada=${jornadaSelect.value}`);
-                const data = await res.json();
-                
-                if (data.status === 'ok') {
-                    dibujarPartidos(data.partidos);
-                    document.getElementById('fecha-limite').value = new Date(data.fechaLimite).toLocaleString();
-                    document.getElementById('extras-container').style.display = 'block';
-                    document.getElementById('submit-container').style.display = 'block';
+                const body = esTemp
+                    ? { accion: 'verificarCuenta', tipo: 'Temporada', codTemp: v, jornada: jornadaSelect.value || '' }
+                    : { accion: 'verificarCuenta', tipo: 'Semanal', codSem: v, jornada: jornadaSelect.value || '' };
+                const d = await postForm(body, 20000);
+                if (inp.value.trim() !== v) return;
+                if (d.status === 'ok') {
+                    hint.className = 'hint ok';
+                    hint.textContent = esTemp ? '✅ Código reconocido' : `✅ Código reconocido · ${d.sem.creditos} crédito(s)`;
                 } else {
-                    // Si el Excel arroja un error (ej. faltan partidos), te dirá exactamente qué pasa
-                    alert("Aviso del Sistema: " + data.message);
+                    hint.className = 'hint bad';
+                    hint.textContent = '❌ ' + d.message;
                 }
-            } catch (e) { 
-                // Si entra aquí es porque Google devolvió una pantalla de inicio de sesión de Google (Acceso Denegado)
-                alert("Error al cargar jornada: El enlace de Google Sheets no responde correctamente. Revisa que los permisos de tu Web App estén configurados para acceso de 'Cualquiera'."); 
+            } catch (e) { hint.className = 'hint'; hint.textContent = ''; }
+        }
+        $('codigo_temporada').addEventListener('blur', () => validarCampo('temp'));
+        $('codigo_semanal').addEventListener('blur', () => validarCampo('sem'));
+
+        // ---------- Jornada ----------
+        function mostrarFecha() {
+            const d = new Date(fechaLimiteISO);
+            $('fecha-limite').value = (!fechaLimiteISO || isNaN(d)) ? 'Sin definir' :
+                d.toLocaleString('es-MX', { weekday: 'long', day: 'numeric', month: 'long', hour: 'numeric', minute: '2-digit' });
+        }
+        function avisoJornada() {
+            const a = $('aviso-jornada');
+            const j = jornadaSelect.value;
+            if (jornadaActiva && j && String(jornadaActiva) !== String(j)) {
+                a.textContent = `⚠️ Ahora solo se reciben quinielas de la Jornada ${jornadaActiva}.`;
+                a.style.display = 'block';
+                $('btn-enviar').disabled = true;
+            } else {
+                a.style.display = 'none';
+                $('btn-enviar').disabled = false;
             }
-            finally { document.getElementById('loading').style.display = 'none'; }
-        };
+        }
+        async function iniciar() {
+            cargando(true, 'Cargando jornada...');
+            try {
+                const info = await fetchJSON(SCRIPT_URL + '?accion=infoJornadas', {}, 25000);
+                if (info.status === 'ok') {
+                    jornadaActiva = String(info.jornadaActiva);
+                    fechaLimiteISO = info.fechaLimite;
+                    jornadaSelect.value = jornadaActiva;
+                    $('est-jornada').value = jornadaActiva;
+                    mostrarFecha();
+                }
+                $('aviso-red').style.display = 'none';
+            } catch (e) { avisoRed(msgError(e), iniciar); cargando(false); return; }
+            cargando(false);
+            if (jornadaSelect.value) await cargarJornada();
+        }
+        async function cargarJornada() {
+            const j = jornadaSelect.value;
+            if (!j) return;
+            cargando(true, 'Cargando partidos...');
+            try {
+                const d = await fetchJSON(`${SCRIPT_URL}?jornada=${encodeURIComponent(j)}`, {}, 25000);
+                if (d.status !== 'ok') { alert('Aviso del Sistema: ' + d.message); return; }
+                if (d.jornadaActiva) jornadaActiva = String(d.jornadaActiva);
+                fechaLimiteISO = d.fechaLimite;
+                partidosActuales = d.partidos;
+                dibujarPartidos(d.partidos);
+                mostrarFecha();
+                $('extras-container').style.display = 'block';
+                $('submit-container').style.display = 'block';
+                $('aviso-red').style.display = 'none';
+                avisoJornada();
+            } catch (e) { avisoRed(msgError(e), cargarJornada); }
+            finally { cargando(false); }
+        }
+        jornadaSelect.onchange = cargarJornada;
 
         function dibujarPartidos(partidos) {
-            const cont = document.getElementById('partidos-container');
-            const comodin = document.getElementById('comodin-select');
-            cont.innerHTML = '';
-            comodin.innerHTML = '<option value="">Selecciona comodín...</option>';
+            const cont = $('partidos-container');
+            const comodin = $('comodin-select');
+            let h = '', o = '<option value="">Selecciona comodín...</option>';
             partidos.forEach((p, i) => {
-                cont.innerHTML += `<div class="partido"><span class="equipo equipo-local">${p.local}</span><input type="number" name="p${i}_local" required><span class="vs-divider">vs</span><input type="number" name="p${i}_visita" required><span class="equipo equipo-visitante">${p.visitante}</span></div>`;
-                comodin.innerHTML += `<option value="${i+1}">P${i+1}: ${p.local} vs ${p.visitante}</option>`;
+                h += `<div class="partido"><span class="equipo equipo-local">${esc(p.local)}</span><input type="number" name="p${i}_local" min="0" max="99" step="1" inputmode="numeric" required><span class="vs-divider">vs</span><input type="number" name="p${i}_visita" min="0" max="99" step="1" inputmode="numeric" required><span class="equipo equipo-visitante">${esc(p.visitante)}</span></div>`;
+                o += `<option value="${i + 1}">P${i + 1}: ${esc(p.local)} vs ${esc(p.visitante)}</option>`;
             });
+            cont.innerHTML = h;
+            comodin.innerHTML = o;
         }
 
+        // ---------- Enviar: verificar y confirmar ----------
+        function leerCodigos() {
+            return { codTemp: $('codigo_temporada').value.trim(), codSem: $('codigo_semanal').value.trim() };
+        }
         form.onsubmit = async (e) => {
             e.preventDefault();
+            if (enviando) return;
             const tipo = tipoJuegoInput.value;
-            const jornada = parseInt(jornadaSelect.value);
-            const codTemp = document.getElementById('codigo_temporada').value;
-            const codSem = document.getElementById('codigo_semanal').value;
+            const jornada = jornadaSelect.value;
+            const { codTemp, codSem } = leerCodigos();
+            if (!tipo) return alert('Selecciona tu tipo de juego.');
+            if (!jornada) return alert('Selecciona la jornada.');
+            if ((tipo === 'Temporada' || tipo === 'Ambos') && !codTemp) return alert('Escribe tu Código de Temporada.');
+            if ((tipo === 'Semanal' || tipo === 'Ambos') && !codSem) return alert('Escribe tu Código Semanal.');
+            if (tipo === 'Semanal' && !$('nombre_semanal').value.trim()) return alert('Escribe el nombre con el que quieres aparecer en la tabla.');
+            const lim = new Date(fechaLimiteISO);
+            if (fechaLimiteISO && !isNaN(lim) && new Date() > lim) return alert('La fecha límite ha sido superada. Ya no puedes enviar la quiniela.');
 
-            document.getElementById('loading').style.display = 'block';
-            
-            let infoDeudaTemp = { deuda: 0, bloqueado: false, permitido: false };
-            let infoSemanal = null;
-            
-            if ((tipo === 'Temporada' || tipo === 'Ambos') && codTemp) {
-                try {
-                    const res = await fetch(`${SCRIPT_URL}?accion=verificarDeuda&codigo=${encodeURIComponent(codTemp)}&jornada=${jornada}`);
-                    infoDeudaTemp = await res.json();
-                } catch (err) { console.error(err); }
-            }
+            cargando(true, 'Verificando tu cuenta...');
+            let info;
+            try { info = await postForm({ accion: 'verificarCuenta', tipo, codTemp, codSem, jornada }, 25000); }
+            catch (err) { cargando(false); return alert(msgError(err)); }
+            cargando(false);
 
-            if ((tipo === 'Semanal' || tipo === 'Ambos') && codSem) {
-                try {
-                    const resSem = await fetch(`${SCRIPT_URL}?accion=verificarSemanal&codigo=${encodeURIComponent(codSem)}&jornada=${jornada}`);
-                    const jsonSem = await resSem.json();
-                    if (jsonSem.status === 'ok') {
-                        infoSemanal = jsonSem;
-                    } else {
-                        document.getElementById('loading').style.display = 'none';
-                        alert("Error Semanal: " + jsonSem.message);
-                        return;
-                    }
-                } catch (err) { console.error(err); }
-            }
-            
-            document.getElementById('loading').style.display = 'none';
-
-            if (infoDeudaTemp.bloqueado) {
-                mostrarConfirmacion('BLOQUEO', infoDeudaTemp);
-                return;
-            }
-
-            if (infoSemanal && infoSemanal.creditos <= 0) {
-                mostrarConfirmacion('SEMANAL_SIN_CREDITOS', infoSemanal);
-                return;
-            }
-
-            mostrarConfirmacion('PROCESAR_MODAL', { temp: infoDeudaTemp, sem: infoSemanal, tipo: tipo });
+            if (info.status !== 'ok') return alert('❌ ' + info.message);
+            if (info.temp && info.temp.bloqueado) return mostrarConfirmacion('BLOQUEO', info.temp);
+            if (info.sem && info.sem.creditos <= 0) return mostrarConfirmacion('SEMANAL_SIN_CREDITOS', info.sem);
+            mostrarConfirmacion('PROCESAR_MODAL', { temp: info.temp, sem: info.sem, tipo });
         };
 
+        function bancoBox() {
+            return `<div class="banco-info"><b>NU México</b> | Eduardo De La Fuente<br>CLABE: <span style="font-weight:bold;">638180000010006302</span>
+                <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button></div>`;
+        }
+        function bloqueTemp(t, conTitulo) {
+            const tit = conTitulo ? '<p style="color:#0b4f6c; font-weight:bold; font-size:1.1em;">🏆 ESTATUS TEMPORADA</p>' : '';
+            if (t.permitido && t.deuda > 0) {
+                return `<div class="bloque">${tit}<p style="color:#1d976c; font-weight:bold; font-size:1.1em;">⭐ PERMISO ESPECIAL ACTIVO</p>
+                    <p style="font-weight:bold; color:#e67e22;">PAGO PENDIENTE: Debes $${t.deuda}</p>
+                    <p style="font-size:0.9em; line-height:1.4; color:#555;">Permiso del administrador para enviar después de la Jornada ${t.jornadaLimite} con deuda pendiente. ¡Favor de pagar lo antes posible!</p></div>`;
+            }
+            if (t.deuda > 0) {
+                return `<div class="bloque">${tit}<p style="color:#e67e22; font-weight:bold; font-size:1.1em;">⚠️ PAGO PENDIENTE: Debes $${t.deuda}</p>
+                    <p style="font-size:0.9em; color:#555;">Recuerda pagar antes de la <b>Jornada ${t.jornadaLimite}</b> para evitar el bloqueo automático de tu código.</p></div>`;
+            }
+            return `<div class="bloque">${tit}<p style="font-weight:bold; color:#2e7d32; font-size:1.1em;">✅ ¡Tu cuenta de Temporada está al corriente!</p></div>`;
+        }
+        function bloqueSem(s, conTitulo) {
+            const tit = conTitulo ? '<p style="color:#0b4f6c; font-weight:bold; font-size:1.1em;">⚽ ESTATUS SEMANAL</p>' : '';
+            const wallet = s.wallet > 0 ? `<p style="color:#1d976c; font-weight:bold;">💰 Tienes $${s.wallet} a favor en tu monedero.</p>` : '';
+            if (s.deuda > 0) {
+                return `<div class="bloque">${tit}<p style="color:#e67e22; font-weight:bold; font-size:1.1em;">⚠️ Debes $${s.deuda} de tus quinielas semanales ya jugadas.</p>
+                    <p style="font-size:0.9em; color:#555;">Jugadas: ${s.jugadas} · Pagado: $${s.pagado}. Tienes ${s.creditos} crédito(s) disponible(s).</p>${wallet}</div>`;
+            }
+            return `<div class="bloque">${tit}<p style="color:#2e7d32; font-weight:bold; font-size:1.1em;">✅ Vas al corriente. Tienes ${s.creditos} crédito(s) disponible(s).</p>${wallet}</div>`;
+        }
+
         function mostrarConfirmacion(estado, info) {
-            const body = document.getElementById('modal-body');
-            const titulo = document.getElementById('modal-titulo');
-            const btnConfirm = document.querySelector('.btn-confirm');
-            
+            const body = $('modal-body'), titulo = $('modal-titulo'), btn = $('btn-confirm-envio');
             titulo.style.color = '#0b4f6c';
-            btnConfirm.style.display = 'block';
             titulo.textContent = '¿Confirmas tu envío?';
+            btn.style.display = 'block';
+            btn.disabled = false;
 
             if (estado === 'BLOQUEO') {
-                titulo.style.color = '#e74c3c';
-                titulo.textContent = '🛑 ACCESO BLOQUEADO';
-                btnConfirm.style.display = 'none';
-                body.innerHTML = `
-                    <p>${info.motivo}</p>
-                    <div class="banco-info">
-                        <b>NU México</b> | CLABE: 638180000010006302
-                        <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer;">COPIAR</button>
-                    </div>
-                    <a href="https://wa.me/528131071919?text=Hola Eduardo, mi cuenta está bloqueada y debo $${info.deuda}. Deseo liquidar." target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Informar pago al Administrador</a>
-                `;
-            } 
-            else if (estado === 'SEMANAL_SIN_CREDITOS') {
-                titulo.style.color = '#e74c3c';
-                titulo.textContent = '🛑 SIN CRÉDITOS';
-                btnConfirm.style.display = 'none';
-                body.innerHTML = `
-                    <p style="font-weight:bold; font-size:1.1em; color:#e74c3c;">no cuentas con creditos para Semanal , Favor de comprar para Participar</p>
-                    <div class="banco-info" style="margin-top:15px;">
-                        <b>NU México</b> | Eduardo De La Fuente<br>
-                        CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
-                        <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
-                    </div>
-                    <a href="https://wa.me/528131071919?text=Hola Eduardo, mi código Semanal no tiene créditos disponibles. Deseo comprar." target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Solicitar Créditos por WhatsApp</a>
-                `;
-            }
-            else if (estado === 'PROCESAR_MODAL') {
-                let htmlContent = "";
-                let requiereDatosBanco = false;
-                let deudasDetectadas = [];
-
+                titulo.style.color = '#e74c3c'; titulo.textContent = '🛑 ACCESO BLOQUEADO'; btn.style.display = 'none';
+                body.innerHTML = `<p>${esc(info.motivo)}</p>${bancoBox()}
+                    <a href="https://wa.me/528131071919?text=${encodeURIComponent('Hola Eduardo, mi cuenta está bloqueada y debo $' + info.deuda + '. Deseo liquidar.')}" target="_blank" style="color:#25D366; font-size:13px; font-weight:bold; text-decoration:none;">📲 Informar pago al Administrador</a>`;
+            } else if (estado === 'SEMANAL_SIN_CREDITOS') {
+                titulo.style.color = '#e74c3c'; titulo.textContent = '🛑 SIN CRÉDITOS'; btn.style.display = 'none';
+                body.innerHTML = `<p style="font-weight:bold; font-size:1.1em; color:#e74c3c;">No cuentas con créditos para Semanal. Favor de comprar para participar.</p>${bancoBox()}
+                    <a href="https://wa.me/528131071919?text=${encodeURIComponent('Hola Eduardo, mi código Semanal no tiene créditos disponibles. Deseo comprar.')}" target="_blank" style="color:#25D366; font-size:13px; font-weight:bold; text-decoration:none;">📲 Solicitar Créditos por WhatsApp</a>`;
+            } else {
+                let html = '', deudas = [];
                 if (info.tipo === 'Temporada') {
-                    if (info.temp.permitido && info.temp.deuda > 0) {
-                        htmlContent = `
-                            <p style="color:#1d976c; font-weight:bold; font-size:1.2em; margin:5px 0;">⭐ PERMISO ESPECIAL ACTIVO</p>
-                            <p style="font-weight:bold; color:#e67e22; margin: 10px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
-                            <p style="font-size:0.95em; line-height:1.4; color:#555;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
-                        `;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
-                    } else if (info.temp.deuda > 0) {
-                        htmlContent = `
-                            <p style="color:#e67e22; font-weight:bold; font-size:1.2em; margin:5px 0;">⚠️ PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
-                            <p style="font-size:0.9em; color:#555;">Recuerda pagar antes de la <b>Jornada ${info.temp.jornadaLimite}</b> para evitar el bloqueo automático de tu código.</p>
-                        `;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
-                    } else {
-                        htmlContent = `<p style="font-weight:bold; color:#2e7d32; font-size:1.1em; margin:10px 0;">✅ ¡Tu cuenta de Temporada está al corriente!</p>`;
-                    }
-                } 
-                
-                else if (info.tipo === 'Semanal') {
-                    let favor = parseFloat(info.sem.saldoFavor) || 0;
-                    let debeTexto = info.sem.estatusDebe.toUpperCase();
-
-                    if (favor > 0) {
-                        htmlContent = `<p style="color:#1d976c; font-weight:bold; font-size:1.15em; margin:10px 0;">💰 Tienes $${favor} a favor y ${info.sem.creditos} crédito(s).</p>`;
-                    } else if (debeTexto.includes("PENDIENTE")) {
-                        htmlContent = `<p style="color:#e67e22; font-weight:bold; font-size:1.15em; margin:10px 0;">⚠️ Tienes ${info.sem.estatusDebe} pesos, cuentas con ${info.sem.creditos} créditos.</p>`;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Semanal (${info.sem.estatusDebe})`);
-                    } else {
-                        htmlContent = `<p style="color:#2e7d32; font-weight:bold; font-size:1.15em; margin:10px 0;">✅ Vas al corriente, tienes ${info.sem.creditos} crédito(s) a favor.</p>`;
-                    }
-                } 
-                
-                else if (info.tipo === 'Ambos') {
-                    let htmlTemp = "";
-                    let htmlSem = "";
-
-                    if (info.temp.permitido && info.temp.deuda > 0) {
-                        htmlTemp = `
-                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
-                                <p style="color:#1d976c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">🏆 ESTATUS TEMPORADA</p>
-                                <p style="color:#1d976c; font-weight:bold; font-size:1.1em; margin:5px 0;">⭐ PERMISO ESPECIAL ACTIVO</p>
-                                <p style="font-weight:bold; color:#e67e22; margin: 5px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
-                                <p style="font-size:0.85em; line-height:1.4; color:#666; margin:5px 0;">Permiso del administrador con el envio de quiniela despues de la Jornada 8 con deuda pendiente !! Favor de pagar lo antes posible !!</p>
-                            </div>
-                        `;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
-                    } else if (info.temp.deuda > 0) {
-                        htmlTemp = `
-                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
-                                <p style="color:#e67e22; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">🏆 ESTATUS TEMPORADA</p>
-                                <p style="font-weight:bold; color:#e67e22; margin: 5px 0;">PAGO PENDIENTE: Debes $${info.temp.deuda}</p>
-                                <p style="font-size:0.85em; color:#666; margin:5px 0;">Recuerda pagar antes de la Jornada ${info.temp.jornadaLimite} para evitar bloqueos.</p>
-                            </div>
-                        `;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Temporada ($${info.temp.deuda})`);
-                    } else {
-                        htmlTemp = `
-                            <div style="margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px dashed #eee; text-align:center;">
-                                <p style="color:#2e7d32; font-weight:bold; font-size:1.15em; margin:0;">✅ TEMPORADA: ¡Al corriente!</p>
-                            </div>
-                        `;
-                    }
-
-                    let favorSem = parseFloat(info.sem.saldoFavor) || 0;
-                    let debeTextoSem = info.sem.estatusDebe.toUpperCase();
-
-                    if (favorSem > 0) {
-                        htmlSem = `
-                            <div style="margin-bottom: 15px; text-align:center;">
-                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
-                                <p style="color:#1d976c; font-weight:bold; font-size:1.1em; margin:0;">💰 Tienes $${favorSem} a favor y ${info.sem.creditos} crédito(s).</p>
-                            </div>
-                        `;
-                    } else if (debeTextoSem.includes("PENDIENTE")) {
-                        htmlSem = `
-                            <div style="margin-bottom: 15px; text-align:center;">
-                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
-                                <p style="color:#e67e22; font-weight:bold; font-size:1.1em; margin:0;">⚠️ Tienes ${info.sem.estatusDebe} pesos, cuentas con ${info.sem.creditos} créditos.</p>
-                            </div>
-                        `;
-                        requiereDatosBanco = true;
-                        deudasDetectadas.push(`Semanal (${info.sem.estatusDebe})`);
-                    } else {
-                        htmlSem = `
-                            <div style="margin-bottom: 15px; text-align:center;">
-                                <p style="color:#0b4f6c; font-weight:bold; font-size:1.15em; margin:0 0 5px 0;">⚽ ESTATUS SEMANAL</p>
-                                <p style="color:#2e7d32; font-weight:bold; font-size:1.1em; margin:0;">✅ Vas al corriente, tienes ${info.sem.creditos} crédito(s) a favor.</p>
-                            </div>
-                        `;
-                    }
-
-                    htmlContent = `${htmlTemp}${htmlSem}`;
+                    html = bloqueTemp(info.temp, false);
+                    if (info.temp.deuda > 0) deudas.push(`Temporada ($${info.temp.deuda})`);
+                } else if (info.tipo === 'Semanal') {
+                    html = bloqueSem(info.sem, false);
+                    if (info.sem.deuda > 0) deudas.push(`Semanal ($${info.sem.deuda})`);
+                } else {
+                    html = bloqueTemp(info.temp, true) + bloqueSem(info.sem, true);
+                    if (info.temp.deuda > 0) deudas.push(`Temporada ($${info.temp.deuda})`);
+                    if (info.sem.deuda > 0) deudas.push(`Semanal ($${info.sem.deuda})`);
                 }
-
-                if (requiereDatosBanco) {
-                    let desgloseDeudas = deudasDetectadas.join(" y ");
-                    let mensajeWhatsApp = `Hola Eduardo, envío comprobante de mi saldo de: ${desgloseDeudas}`;
-                    
-                    htmlContent += `
-                        <div class="banco-info" style="margin-top:15px;">
-                            <b>NU México</b> | Eduardo De La Fuente<br>
-                            CLABE: <span id="clabe-txt" style="font-weight:bold;">638180000010006302</span>
-                            <button type="button" onclick="copiarClabe()" style="background:#0b4f6c; color:white; border:none; padding:4px 8px; border-radius:4px; font-size:10px; cursor:pointer; margin-left:5px;">COPIAR</button>
-                        </div>
-                        <a href="https://wa.me/528131071919?text=${encodeURIComponent(mensajeWhatsApp)}" target="_blank" style="color:#25D366; font-size:12px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>
-                    `;
+                if (deudas.length) {
+                    html += bancoBox() + `<a href="https://wa.me/528131071919?text=${encodeURIComponent('Hola Eduardo, envío comprobante de mi saldo de: ' + deudas.join(' y '))}" target="_blank" style="color:#25D366; font-size:13px; font-weight:bold; text-decoration:none;">📲 Enviar comprobante por WhatsApp</a>`;
                 }
-
-                htmlContent += `<p style="margin-top:20px; font-weight:bold; text-align:center;">Recuerda revisar bien tus resultados antes de enviar.<br>¿Estás seguro de tu pronóstico?</p>`;
-                body.innerHTML = htmlContent;
+                html += `<p style="margin-top:20px; font-weight:bold; text-align:center;">Recuerda revisar bien tus resultados antes de enviar.<br>¿Estás seguro de tu pronóstico?</p>`;
+                body.innerHTML = html;
             }
-            document.getElementById('modal-confirmacion').style.display = 'flex';
+            $('modal-confirmacion').style.display = 'flex';
+        }
+
+        // ---------- Envío final ----------
+        function armarParametros() {
+            const p = {};
+            new FormData(form).forEach((v, k) => { p[k] = String(v).trim(); });
+            p.codigo_temporada = $('codigo_temporada').value.trim();
+            p.codigo_semanal = $('codigo_semanal').value.trim();
+            p.accion = 'enviarPronostico';
+            p.folio = FOLIO;
+            return p;
+        }
+        function firmaLocal(p) {
+            const m = [];
+            for (let i = 0; i < 9; i++) m.push(`${parseInt(p['p' + i + '_local'], 10)}-${parseInt(p['p' + i + '_visita'], 10)}`);
+            return m.join(',') + '|' + parseInt(p.totalgoles, 10) + '|' + parseInt(p.comodin, 10);
         }
 
         async function ejecutarEnvioFinal() {
+            if (enviando) return;
+            enviando = true;
+            $('btn-confirm-envio').disabled = true;
             cerrarModal();
-            document.getElementById('loading').style.display = 'block';
-            const formData = new FormData(form);
-            const data = Object.fromEntries(formData.entries());
-            data.accion = "enviarPronostico";
+            cargando(true, 'Enviando tu quiniela...');
+            const p = armarParametros();
             try {
-                const res = await fetch(SCRIPT_URL, { method: 'POST', body: new URLSearchParams(data) });
-                const json = await res.json();
-                alert(json.message);
-                if (json.status === 'ok') location.reload();
-            } catch (e) { alert("Error al enviar"); }
-            finally { document.getElementById('loading').style.display = 'none'; }
+                const d = await postForm(p, 45000);
+                cargando(false);
+                if (d.status === 'ok') mostrarResumen(d.resumen, d.message);
+                else { alert(d.message); enviando = false; }
+            } catch (err) {
+                cargando(false);
+                await confirmarTrasFallo(p, err);
+            }
+            $('btn-confirm-envio').disabled = false;
         }
 
-        // AUXILIARES
-        function cerrarModal() { document.getElementById('modal-confirmacion').style.display = 'none'; }
+        async function confirmarTrasFallo(p, err) {
+            cargando(true, 'Revisando si tu quiniela llegó...');
+            try {
+                const d = await postForm({ accion: 'estatusEnvio', codTemp: p.codigo_temporada, codSem: p.codigo_semanal, jornada: p.jornada }, 20000);
+                cargando(false);
+                if (d.status === 'ok') {
+                    const mia = d.envios.find(e => {
+                        const m = e.marcadores.map(x => x.split('-').map(n => parseInt(n, 10)).join('-')).join(',');
+                        return m + '|' + parseInt(e.totalGoles, 10) + '|' + parseInt(e.comodin, 10) === firmaLocal(p);
+                    });
+                    if (mia) {
+                        const marc = mia.marcadores.map(x => x.split('-').map(n => parseInt(n, 10)));
+                        mostrarResumen({ jornada: p.jornada, tipo: mia.tipo, nombre: mia.nombre, fecha: mia.fecha, marcadores: marc, comodin: mia.comodin, totalGoles: mia.totalGoles }, '✅ ¡Sí llegó! Tu quiniela ya estaba registrada.');
+                        return;
+                    }
+                }
+            } catch (e2) { cargando(false); }
+            enviando = false;
+            alert(msgError(err) + '\n\nNo pudimos confirmar tu envío. Puedes presionar "Enviar Quiniela" otra vez: si ya había llegado, no se duplica ni se cobra otro crédito.');
+        }
+
+        function mostrarResumen(r, msg) {
+            r = r || {};
+            let h = `<div class="res-fila"><b>Jornada</b><span>${esc(r.jornada)}</span></div>
+                <div class="res-fila"><b>Tipo</b><span>${esc(r.tipo)}</span></div>
+                <div class="res-fila"><b>Nombre</b><span>${esc(r.nombre)}</span></div>
+                <div class="res-fila"><b>Recibida</b><span>${esc(r.fecha)}</span></div>`;
+            (r.marcadores || []).forEach((m, i) => {
+                const p = partidosActuales[i] || { local: 'Partido ' + (i + 1), visitante: '' };
+                const esCom = parseInt(r.comodin, 10) === i + 1;
+                h += `<div class="res-fila ${esCom ? 'com' : ''}"><span>${esCom ? '★ ' : ''}${esc(p.local)} vs ${esc(p.visitante)}</span><b>${esc(m[0])} - ${esc(m[1])}</b></div>`;
+            });
+            h += `<div class="res-fila"><b>Total de goles</b><span>${esc(r.totalGoles)}</span></div>`;
+            $('resumen-titulo').textContent = msg || '✅ ¡Quiniela recibida!';
+            $('resumen-detalle').innerHTML = h;
+            form.style.display = 'none';
+            $('resumen').style.display = 'block';
+            window.scrollTo(0, 0);
+        }
+
+        // ---------- ¿Ya envié? ----------
+        $('btn-ya-envie').onclick = () => {
+            $('est-jornada').value = jornadaSelect.value || jornadaActiva || '1';
+            $('est-cod-temp').value = $('codigo_temporada').value;
+            $('est-cod-sem').value = $('codigo_semanal').value;
+            $('est-resultado').innerHTML = '';
+            $('modal-estatus').style.display = 'flex';
+        };
+        $('btn-est-consultar').onclick = async () => {
+            const codTemp = $('est-cod-temp').value.trim(), codSem = $('est-cod-sem').value.trim(), jornada = $('est-jornada').value;
+            const out = $('est-resultado');
+            if (!codTemp && !codSem) { out.innerHTML = '<p style="color:#c0392b;">Escribe al menos un código.</p>'; return; }
+            out.innerHTML = '<p>Consultando…</p>';
+            try {
+                const d = await postForm({ accion: 'estatusEnvio', codTemp, codSem, jornada }, 25000);
+                if (d.status !== 'ok') { out.innerHTML = `<p style="color:#c0392b;">${esc(d.message)}</p>`; return; }
+                if (!d.envios.length) { out.innerHTML = `<p style="color:#c0392b; font-weight:bold;">❌ No hay ninguna quiniela registrada para la Jornada ${esc(jornada)} con esos códigos.</p>`; return; }
+                out.innerHTML = d.envios.map(e => `<div class="envio-card"><b>✅ Recibida el ${esc(e.fecha)}</b><br>${esc(e.tipo)} · ${esc(e.nombre)}<br>Marcadores: ${e.marcadores.map(esc).join(' | ')}<br>Comodín: P${esc(e.comodin)} · Total goles: ${esc(e.totalGoles)}</div>`).join('');
+            } catch (e) { out.innerHTML = `<p style="color:#c0392b;">${esc(msgError(e))}</p>`; }
+        };
+
+        // ---------- Auxiliares ----------
+        function cerrarModal() { $('modal-confirmacion').style.display = 'none'; }
         function copiarClabe() { navigator.clipboard.writeText("638180000010006302"); alert("✅ CLABE copiada"); }
+
+        iniciar();
     </script>
 </body>
 </html>
